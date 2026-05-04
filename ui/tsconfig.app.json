@@ -1,0 +1,22 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite/client"],
+    "ignoreDeprecations": "6.0",
+
+    /* 路径别名配置 */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    /* Linting */
+    // "noUnusedLocals": true, // 检查未使用的局部变量
+    // "noUnusedParameters": true, // 检查未使用的函数参数
+    "erasableSyntaxOnly": true, // 只允许可以被完全删除的 TypeScript 语法
+    "noFallthroughCasesInSwitch": true // 防止 switch 语句中忘记写 break 导致意外"穿透"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,85 @@
+@import url('./theme.less');
+@import url('./ncjd.less');
+
+/* ================ 全局样式 ================================================== */
+body {
+  font-family:
+    'Microsoft YaHei',
+    'PingFang SC',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  font-size: 16px; /* PC端缩放基准 */
+}
+
+html.mobile body {
+  font-size: 14px; /* 移动端缩放基准 */
+}
+/* ================ 浅色基础样式 ================================================== */
+:root {
+  background-color: rgb(219 222 227);
+  color: #111827;
+  transition: background-color 0.8s cubic-bezier(0.2, 0.9, 0.4, 1);
+}
+/* ================ 深色基础样式 ================================================== */
+html.dark {
+  /* background-color: rgb(16 16 20); */
+  /* background-color: rgb(12 15 20); */
+  background-color: rgb(2 6 23);
+  color: #f9fafb;
+  transition: background-color 0.8s cubic-bezier(0.2, 0.9, 0.4, 1);
+}
+/* ================ 手机样式 ================================================== */
+html.mobile {
+  font-size: 14px;
+}
+
+/* ================ 盒模型重置 ================================================== */
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+/* ================ 其他全局重置 ================================================== */
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+html {
+  /* 字体渲染优化 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* 滚动行为平滑 */
+  scroll-behavior: smooth;
+}
+
+/* 防止a标签高度问题 */
+/* a svg {
+
+  color: #676d8e;
+  vertical-align: middle; 
+} */
+
+/* VUE动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

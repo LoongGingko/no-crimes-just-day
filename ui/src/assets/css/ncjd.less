@@ -1,0 +1,166 @@
+/* ================ 整体布局 ================================================== */
+.ncjd-layout {
+  min-height: 100vh;
+  position: relative;
+}
+/* ================ 卡片样式 ================================================== */
+/* 毛玻璃卡片 */
+.ncjd-card {
+  background-color: var(--ncjd-color-card);
+  border-color: var(--ncjd-color-border);
+  border-style: solid;
+  border-width: 1px;
+  box-shadow:
+    0 40px 50px -32px #0000000d,
+    inset 0 0 20px #ffffff40;
+}
+
+html.dark .ncjd-card {
+  box-shadow: 0 40px 50px -32px #0000000d;
+}
+
+/* 卡片悬浮高亮 */
+.ncjd-hover {
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: var(--ncjd-color-card-hover);
+  }
+}
+
+/* 卡片悬浮高亮（菜单项） */
+.ncjd-hover2 {
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: var(--ncjd-color-card-h);
+  }
+}
+
+html.dark .ncjd-hover2:hover {
+  background-color: rgb(148 163 184 / 15%);
+}
+
+/* 背景更亮 */
+.ncjd-h {
+  background-color: var(--ncjd-color-card-h);
+}
+/* 背景更暗 */
+.ncjd-l {
+  background-color: var(--ncjd-color-card-l);
+}
+/* 背景更暗2 */
+.ncjd-l2 {
+  background-color: var(--ncjd-color-card-l2);
+}
+/* ================ 文本样式 ================================================== */
+/* 文字 (白色) */
+.ncjd-text {
+  color: #f9fafb;
+  text-shadow: 0 1px 2px rgb(150 150 150 / 50%);
+}
+/* ================ 边框样式 ================================================== */
+
+/* 边框 */
+.ncjd-ring {
+  border-color: var(--ncjd-color-border);
+  border-style: solid;
+  border-width: 1px;
+}
+/* ================ 按钮样式 ================================================== */
+/* 主要按钮 */
+.ncjd-btn {
+  background-color: rgb(255 255 255 / 70%);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  transition: box-shadow 500ms;
+
+  &:hover {
+    box-shadow: 0 0 10px 4px rgb(118 159 209 / 12%) inset;
+  }
+}
+
+html.dark .ncjd-btn {
+  background-color: rgb(24 24 27 / 20%);
+
+  &:hover {
+    box-shadow: 0 0 8px 0 hsl(60deg 10% 96% / 25%) inset;
+  }
+}
+
+/* 主要按钮（蓝） */
+.ncjd-btn-b {
+  background-color: rgb(32 128 240 / 16%);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  transition: box-shadow 500ms;
+
+  &:hover {
+    box-shadow: 0 6px 10px 6px rgb(118 159 209 / 12%) inset;
+  }
+}
+
+html.dark .ncjd-btn-b {
+  background-color: rgb(112 192 232 / 16%);
+
+  &:hover {
+    box-shadow: 0 0 8px 0 hsl(60deg 10% 96% / 25%) inset;
+  }
+}
+
+/* 主要按钮（红） */
+.ncjd-btn-r {
+  background-color: rgb(247 58 95 / 16%);
+  color: #d03050;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  transition: box-shadow 500ms;
+
+  &:hover {
+    box-shadow: 0 6px 10px 6px rgb(118 159 209 / 12%) inset;
+  }
+}
+
+html.dark .ncjd-btn-r {
+  background-color: rgb(232 128 128 / 16%);
+  color: #e88080;
+
+  &:hover {
+    box-shadow: 0 0 8px 0 hsl(60deg 10% 96% / 25%) inset;
+  }
+}
+
+/* 次要按钮 */
+.ncjd-btn-2 {
+  align-items: center; /* 根据需要加flex */
+
+  span {
+    margin-left: 0.5rem;
+    /* 文字 */
+    white-space: nowrap;
+  }
+}
+/* ================ 图标样式 ================================================== */
+/* 小图标 */
+.svg-sm {
+  height: 1.125rem;
+  width: 1.125rem;
+}
+/* ================ 美化样式 ================================================== */
+.ncjd-slogen {
+  :nth-child(1) {
+    color: #10293e;
+  }
+
+  :nth-child(2) {
+    color: #52797d;
+  }
+
+  :nth-child(3) {
+    color: #bb7915;
+  }
+
+  :nth-child(4) {
+    color: #742911;
+  }
+}

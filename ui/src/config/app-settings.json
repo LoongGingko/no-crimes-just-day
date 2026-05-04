@@ -1,0 +1,17 @@
+{
+  "theme": "light",
+  "lang": "zh",
+  "colorWeak": false,
+  "navbar": true,
+  "menu": true,
+  "hideMenu": false,
+  "menuCollapse": false,
+  "footer": false,
+  "themeColor": "#165DFF",
+  "menuWidth": 220,
+  "globalSettings": false,
+  "device": "desktop",
+  "tabBar": false,
+  "menuFromServer": false,
+  "serverMenu": []
+}
