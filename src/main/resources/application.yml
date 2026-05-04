@@ -1,0 +1,111 @@
+###############################################################################
+# Spring配置
+spring:
+  config:
+    import: optional:file:.env[.properties]
+    
+  application:
+    name: no-crimes-just-day
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 50MB
+
+  # MySQL
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 10            # 固定连接池
+      connection-timeout: 30000   # 连接超时
+      max-lifetime: 1800000       # 连接最大存活30分钟，小于MySQL wait_timeout (8h)
+      keepalive-time: 60000       # 每60s心跳，防止防火墙踢掉空闲连接
+      connection-test-query: SELECT 1
+      
+  # Redis
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:0}
+      # ========== 超时配置 ==========
+      connect-timeout: 1000ms      # 建立连接超时
+      timeout: 2000ms              # 读取超时
+      # ========== Lettuce连接池配置 ==========
+      lettuce:
+        pool:
+          max-active: 10           # 最大连接数
+          max-idle: 5              # 最大空闲
+          min-idle: 2              # 最小空闲
+          max-wait: 2000ms         # 线程有限等待（FastFail）
+###############################################################################
+# MyBatis-Plus
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml # mapper文件位置（默认值）
+  type-aliases-package: com.loogingko.ncjd.entity # 实体类扫描路径
+  configuration:
+    map-underscore-to-camel-case: true # 开启下划线和驼峰的映射（默认值）
+    call-setters-on-nulls: true # 允许在setter方法中传入null值
+    cache-enabled: false # 关闭二级缓存（默认值）
+    # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 使用控制台打印Sql（会打印所有细节，无法过滤结果，难以使用）
+  global-config:
+    db-config:
+      id-type: assign_id # 雪花主键（默认值）
+      update-strategy: not_null # 更新策略：只更新非空字段
+###############################################################################
+# NCJD配置
+ncjd:
+  cookie-secure: false # 开发环境用Http
+###############################################################################
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+###############################################################################
+# Sealos 对象存储（MinIO S3 兼容）。
+# SDK 上传必须能 TCP 连上 endpoint：本地/集群外请用公网 API；仅当 Pod 跑在同一集群内时才可用 internal：
+#   https://object-storage.objectstorage-system.svc.cluster.local
+minio:
+  endpoint: https://objectstorageapi.hzh.sealos.run
+  access-key: ${MINIO_ACCESS}
+  secret-key: ${MINIO_SECRET}
+  bucket: ${MINIO_BUCKET}
+  region: ${MINIO_REGION}
+  # 返回给前端的公网访问基址（须与存储桶 publicRead 等权限配合）
+  public-base-url: https://objectstorageapi.hzh.sealos.run
+
+###############################################################################
+# 2026.4.16 Dubbo + ZooKeeper
+#dubbo:
+#  application:
+#    name: my-dubbo # Dubbo服务名
+#  protocol:
+#    name: dubbo # 通信协议
+#    port: -1 # 自动分配端口
+#  registry:
+#    address: zookeeper://47.116.37.204:2181 # ZooKeeper远程地址
+###############################################################################
+logging:
+   level:
+     # 根日志级别 (默认INFO)
+     root: INFO
+     # 打印 SQL 语句
+     com.loogingko.ncjd.mapper: DEBUG
+     # 或者打印所有 MyBatis 日志
+#     org.apache.ibatis: DEBUG
+  
+#  级别越高，输出的日志越少。
+#  ERROR (最高) - 错误事件，程序无法继续运行
+#  ↑
+#  WARN        - 警告事件，可能存在问题但不影响运行
+#  ↑
+#  INFO        - 重要业务流程的普通信息 (根日志器默认级别 INFO)
+#  ↑
+#  DEBUG       - 调试信息，用于开发调试
+#  ↑
+#  TRACE (最低) - 最详细的追踪信息，比 DEBUG 更细

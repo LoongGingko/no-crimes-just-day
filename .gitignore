@@ -1,0 +1,27 @@
+# Maven构建
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# 前端
+ui/node_modules/
+ui/dist/
+ui/logs/
+ui/*.log
+ui/.vscode/
+ui/.idea/
+ui/ncjd-ui.code-workspace
+
+# 日志文件
+logs/
+*.log
+
+# 环境变量 & 密钥
+.env
+
+# 操作系统
+.DS_Store
+Thumbs.db
