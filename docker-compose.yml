@@ -101,9 +101,9 @@ services:
                 max-size: "20m"
                 max-file: "3"
         volumes:
-            - /opt/mariadb/data/:/var/lib/mysql             # 数据持久化
-            - ./init-sql/:/docker-entrypoint-initdb.d       # 建表SQL持久化
-            - /etc/mysql:/etc/mysql                         # 配置文件持久化
+            - /opt/mariadb/data/:/var/lib/mysql                         # 数据持久化
+            - /opt/mariadb/initdb/:/docker-entrypoint-initdb.d          # mariadb:10 仅会在首次初始化自动执行
+            - /opt/mariadb/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf       # 配置文件持久化 (指定utf8mb4字符集)
         healthcheck:
             test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
             interval: 10s

@@ -2,7 +2,7 @@
  * @author       LiuRunYu 2026-04-08
  * @description  Pinia全局属性 (业务层)
  */
-import { isEmpty } from '@/utils/common';
+import { isEmpty, jump2 } from '@/utils/common';
 import { defineStore } from 'pinia';
 import { type MyStoreState } from './types';
 import { http } from '@/api/http';
@@ -56,7 +56,7 @@ export const useMyStore = defineStore(STORAGE_KEY, {
       this.nickname = data.nickname;
       this.persist();
     },
-    logout() {
+    logout(toLogin?: boolean) {
       if (this.logged) {
         // 请求后端删除jwt cookie
         http.req('/logout', 'post', { username: this.username }, () => {
@@ -65,6 +65,7 @@ export const useMyStore = defineStore(STORAGE_KEY, {
       } else {
         this.resetLogout(); // 不发请求，仅重置前端
       }
+      if (toLogin) jump2('/login');
     },
     // 重置前端登录状态
     resetLogout() {

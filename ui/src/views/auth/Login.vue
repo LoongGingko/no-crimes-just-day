@@ -179,6 +179,8 @@ const doLogin = async () => {
       if (hasSucc(R)) {
         myStore.login(R.data);
         jump2('/');
+      } else {
+        refreshCaptcha();
       }
     });
   } finally {

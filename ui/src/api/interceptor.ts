@@ -89,7 +89,7 @@ function errToken(msg: any) {
   });
 }
 
-// 登陆后每次刷新，后台重新校验token有效期
+// 登录后每次刷新，后台重新校验token有效期
 export async function verifyToken() {
   let retBol = false;
   await http.req('/auth/verify', 'post', {}, () => {

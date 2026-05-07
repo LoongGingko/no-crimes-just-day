@@ -24,7 +24,7 @@ public class User {
         this.password = password;
         this.nickname = "新注册用户";
         this.status = 1;
-        this.setLoginTime(LocalDateTime.now()); // 登陆时间
+        this.setLoginTime(LocalDateTime.now()); // 登录时间
         this.setStatus(Status.ENABLED.getCode());  // 启用状态
     }
 

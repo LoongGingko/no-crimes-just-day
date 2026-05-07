@@ -3,7 +3,7 @@ package com.loogingko.ncjd.model.vo;
 import lombok.Data;
 
 /**
- * 登陆成功后前端拿到的对象
+ * 登录成功后前端拿到的对象
  * @author LiuRunYu 2026-04-07
  */
 @Data

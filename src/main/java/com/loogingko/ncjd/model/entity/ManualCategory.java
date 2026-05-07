@@ -24,7 +24,7 @@ public class ManualCategory {
     private String id;
 
     /**
-     * 所属用户（0=公开/登陆可见）
+     * 所属用户（0=公开/登录可见）
      */
     private String userId;
 

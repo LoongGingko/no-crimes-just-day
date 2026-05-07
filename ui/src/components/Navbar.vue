@@ -303,7 +303,7 @@ const login = () => {
 
 // 点击退出登录
 const logout = () => {
-  myStore.logout();
+  myStore.logout(true);
   showPopover.value = false;
 };
 
