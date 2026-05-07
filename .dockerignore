@@ -4,13 +4,11 @@
 .vscode
 *.iml
 
-target
 logs
 *.log
 
 .env
-.env.*
-!.env.example
+.env.dev
 
 # 忽略前端
 ui/
