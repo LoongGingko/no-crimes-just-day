@@ -1,6 +1,7 @@
-package com.loogingko.ncjd.service;
+package com.loogingko.ncjd.service.auth;
 
 import com.loogingko.ncjd.model.entity.User;
+import com.loogingko.ncjd.service.biz.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

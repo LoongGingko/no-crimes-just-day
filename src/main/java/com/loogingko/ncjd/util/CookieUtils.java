@@ -1,6 +1,7 @@
 package com.loogingko.ncjd.util;
 
 import com.loogingko.ncjd.config.NCJDProperties;
+import com.loogingko.ncjd.constant.Constants;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,7 +56,20 @@ public class CookieUtils {
     public static void remove(String name) {
         add(name, "", 0);
     }
-    
+
+    /** 从Cookie获取token */
+    public static String extractTokenFromCookie() {
+        Cookie[] cookies = getRequest().getCookies();
+        if (cookies == null) return null;
+        
+        for (var cookie : cookies) {
+            if (Constants.TOKEN_COOKIE_NAME.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
     // ---- private ----
     private static HttpServletRequest getRequest() {
         return getAttributes().getRequest();

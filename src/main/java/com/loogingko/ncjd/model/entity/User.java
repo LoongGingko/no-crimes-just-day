@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
+ * 系统用户
  * @author LiuRunYu 2026-04-07
  */
 @Data

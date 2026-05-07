@@ -1,8 +1,8 @@
 package com.loogingko.ncjd;
 
 import com.loogingko.ncjd.model.entity.User;
-import com.loogingko.ncjd.service.JwtService;
-import com.loogingko.ncjd.service.UserService;
+import com.loogingko.ncjd.service.auth.JwtService;
+import com.loogingko.ncjd.service.biz.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

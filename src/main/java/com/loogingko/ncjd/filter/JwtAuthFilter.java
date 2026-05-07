@@ -1,14 +1,15 @@
 package com.loogingko.ncjd.filter;
 
 import com.loogingko.ncjd.config.SecurityConfig;
-import com.loogingko.ncjd.constant.Constants;
-import com.loogingko.ncjd.service.JwtService;
+import com.loogingko.ncjd.service.auth.JwtService;
+import com.loogingko.ncjd.util.CookieUtils;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ import java.util.Collections;
  * 业务接口须在请求头携带 {@code token}。未登录或令牌无效时返回 401。
  * Filter过滤器，用于过滤请求，如果请求头中没有token，则返回401状态码。
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -49,13 +51,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         logRequest(request);
 
         // 1. 获取Cookie中的token
-        String token = extractTokenFromCookie(request);
+        String token = CookieUtils.extractTokenFromCookie();
 
         // 2. 如果token为空，则返回401状态码
         if (!StringUtils.hasText(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"code\":401,\"msg\":\"令牌为空\"}");
+            log.info("请求被拦截：401 令牌为空");
             return;
         }
 
@@ -66,6 +69,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"code\":401,\"msg\":\"令牌无效\"}");
+            log.info("请求被拦截：401 令牌无效");
             return;
         }
 
@@ -78,19 +82,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
     
-    // 从Cookie获取token
-    private String extractTokenFromCookie(HttpServletRequest request) {
-        if (request.getCookies() == null) {
-            return null;
-        }
-        for (var cookie : request.getCookies()) {
-            if (Constants.TOKEN_COOKIE_NAME.equals(cookie.getName())) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
-
     // 打印 HTTP 请求便于调试
     private void logRequest(HttpServletRequest request) {
         String uri = request.getRequestURI();

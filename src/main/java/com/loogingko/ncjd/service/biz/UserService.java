@@ -1,4 +1,4 @@
-package com.loogingko.ncjd.service;
+package com.loogingko.ncjd.service.biz;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.loogingko.ncjd.mapper.UserMapper;

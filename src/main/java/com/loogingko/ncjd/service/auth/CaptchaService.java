@@ -1,4 +1,4 @@
-package com.loogingko.ncjd.service;
+package com.loogingko.ncjd.service.auth;
 
 import com.loogingko.ncjd.model.bo.R;
 import com.loogingko.ncjd.model.dto.LoginRequest;

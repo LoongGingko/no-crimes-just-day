@@ -9,10 +9,10 @@ import com.loogingko.ncjd.model.dto.LogoutRequest;
 import com.loogingko.ncjd.model.dto.RegisterRequest;
 import com.loogingko.ncjd.model.entity.User;
 import com.loogingko.ncjd.model.vo.LoginResponse;
-import com.loogingko.ncjd.service.CaptchaService;
-import com.loogingko.ncjd.service.JwtService;
-import com.loogingko.ncjd.service.LimitService;
-import com.loogingko.ncjd.service.UserService;
+import com.loogingko.ncjd.service.auth.CaptchaService;
+import com.loogingko.ncjd.service.auth.JwtService;
+import com.loogingko.ncjd.service.auth.LimitService;
+import com.loogingko.ncjd.service.biz.UserService;
 import com.loogingko.ncjd.util.CookieUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -63,16 +63,16 @@ public class LoginController {
         String username = req.getUsername();
         log.info("登录请求: username={}", username);
 
-        // 安全性增强：限制登录频率
+        // 安全性增强1：校验图形验证码
+        R r = captchaService.vaildateCaptcha(req);
+        if (r.hasFailed()) return r;
+        
+        // 安全性增强2：限制登录频率
         if (limitService.isLoginBlocked(username)) {
             long remainingTime = limitService.getRemainingTime("rate:login:", username);
             log.warn("登录频率限制: username={}, 剩余锁定时间={}s", username, remainingTime);
             return R.fail("登录尝试次数过多，请" + remainingTime + "秒后再试").code(429);
         }
-        // 安全性增强：校验图形验证码
-        R r = captchaService.vaildateCaptcha(req);
-        if (r.hasFailed()) return r;
-        
         try {
             // 1. 创建未认证的 Token
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, req.getPassword());
@@ -90,11 +90,11 @@ public class LoginController {
             // 5. 返回成功消息
             log.info("登录成功: username={}", username);
             limitService.clearLoginLimit(username);
-            return R.succ(BeanUtil.copyProperties(userDb, LoginResponse.class));
+            return R.succ(BeanUtil.copyProperties(userDb, LoginResponse.class)).success("登录成功：" + username);
             
         } catch (BadCredentialsException e) {
             log.warn("登录失败: username={}, 原因=用户名或密码错误", username);
-            limitService.recordLoginFailure(username);
+            limitService.recordLoginFailure(username); // 登录失败计数器+1
             return R.fail("用户名或密码错误").code(401);
             
         } catch (Exception e) {
@@ -139,10 +139,11 @@ public class LoginController {
      * 用户退出登录
      */
     @PostMapping("/logout")
-    public void logout(@Valid @RequestBody LogoutRequest req) {
+    public R logout(@RequestBody LogoutRequest req) {
         String username = req.getUsername();
         CookieUtils.remove(Constants.TOKEN_COOKIE_NAME);
         log.info("退出登录成功: username={}", username);
+        return R.succ(null).success("退出登录成功：" + username);
     }
 
     /**

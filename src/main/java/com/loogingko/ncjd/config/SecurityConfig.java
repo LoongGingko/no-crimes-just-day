@@ -1,7 +1,7 @@
 package com.loogingko.ncjd.config;
 
 import com.loogingko.ncjd.filter.JwtAuthFilter;
-import com.loogingko.ncjd.service.NCJDUserDetailsService;
+import com.loogingko.ncjd.service.auth.NCJDUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,8 +1,10 @@
-package com.loogingko.ncjd.service;
+package com.loogingko.ncjd.service.auth;
 
 import com.loogingko.ncjd.config.JwtProperties;
+import com.loogingko.ncjd.constant.Constants;
 import com.loogingko.ncjd.model.bo.LoginUser;
 import com.loogingko.ncjd.model.entity.User;
+import com.loogingko.ncjd.util.CookieUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -64,5 +66,19 @@ public class JwtService {
             claims.get("username", String.class),
             claims.get("role", String.class)
         );
+    }
+    
+    // 返回当前登录用户ID (未登录返回Public用户)
+    public String getCurrentUserId() {
+        String token = CookieUtils.extractTokenFromCookie();
+        if (token == null) return Constants.PUBLIC_USERID;
+
+        LoginUser lu;
+        try {
+            lu = getUserFromToken(token);
+        } catch (JwtException e) {
+            return Constants.PUBLIC_USERID;
+        }
+        return lu.getId();
     }
 }
