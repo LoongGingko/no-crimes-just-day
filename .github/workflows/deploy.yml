@@ -19,9 +19,16 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: maven # 开启 Maven 缓存以加快速度
 
-      - name: 3. 使用Maven构建项目（跳过测试以加快速度）
+      - name: 3.1 使用Maven缓存
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: 3.2 使用Maven构建项目（跳过测试以加快速度）
         run: mvn clean package -DskipTests
 
       - name: 4. 构建Docker镜像
