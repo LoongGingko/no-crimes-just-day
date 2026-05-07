@@ -1,0 +1,11 @@
+###### 仅限本地开发环境 (IDEA内配置启动参数) #####################################################
+spring:
+  config:
+    import: optional:file:.env.dev[.properties]
+
+ncjd:
+  cookie-secure: false
+
+logging:
+  level:
+    com.loogingko.ncjd.mapper: DEBUG

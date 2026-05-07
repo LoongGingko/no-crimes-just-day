@@ -1,0 +1,125 @@
+######### NCJD - Docker Compose构建文件 ################
+# 1. 将本文件和.env放入/opt/docker目录下 (会自动查找目录下.env文件，无需配置)
+# 2. cd /opt/docker
+# 3. docker compose up -d (-d 后台运行)
+
+# ---------- 常用命令 -------------
+# 首次启动	  docker compose up -d (-d 后台运行)
+# 删除容器	  docker compose rm
+# 停止运行	  docker compose down (-v 同时删除卷)
+# 重  启	  docker compose restart
+# 查看状态	  docker compose ps
+# 实时日志	  docker compose logs -f --tail=100 (-f 实时跟踪 --tail 最后N行日志)
+# 进入容器	  docker compose exec ncjd-app sh
+# 更新镜像	  docker compose pull && docker compose up -d
+
+
+services:
+    
+    # -----------------------------
+    # 我的应用：ncjd-app
+    # -----------------------------
+    ncjd:
+        image: ahornbeast/ncjd:latest
+        container_name: ncjd-app
+        networks:
+            - app_network
+        ports:
+            - "8080:8080"
+        # 读取环境变量 (含密钥)
+        env_file:
+            - .env                    # 读取本地 .env 文件注入环境变量
+        # 延长关闭等待时间
+        stop_grace_period: 60s
+        depends_on:
+            redis:
+#                condition: service_started # 前置应用启动后直接启动
+                condition: service_healthy # 前置应用启动后直接启动
+            mariadb:
+                condition: service_healthy # 等健康检查通过才启动
+        # 同步tomcat日志/配置
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "20m"
+                max-file: "3"
+#        volumes:
+#            - /usr/local/tomcat/logs:/usr/local/tomcat/logs
+#            - /usr/local/tomcat/conf:/usr/local/tomcat/conf
+#            # - /usr/local/tomcat/work:/usr/local/tomcat/work
+#            # - /usr/local/tomcat/temp:/usr/local/tomcat/temp
+#            - dist:/var/lib/365hrmmtdata/365hrmmt/dist
+#            - /var/lib/365hrmmtdata:/var/lib/365hrmmtdata # 默认推荐映射
+        
+    # -----------------------------
+    # 缓存服务：redis-app
+    # -----------------------------
+    redis:
+        image: redis:7.4-alpine
+        container_name: redis-app
+        restart: unless-stopped
+        networks:
+            - app_network
+        ports:
+            - "6379:6379"
+        environment:
+            REDIS_PASSWORD: ${REDIS_PASSWORD}
+        command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"] # 启动时设置密码
+        healthcheck:
+            test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "5m"
+                max-file: "3"
+        volumes:
+            - /opt/redis/data:/data         # 数据持久化
+        
+        
+    # -----------------------------
+    # 数据库服务：mariadb-app
+    # -----------------------------
+    mariadb:
+        image: mariadb:10
+        container_name: mariadb-app
+        restart: unless-stopped
+        networks:
+            - app_network
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_DATABASE: ncjd
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "20m"
+                max-file: "3"
+        volumes:
+            - /opt/mariadb/data/:/var/lib/mysql             # 数据持久化
+            - ./init-sql/:/docker-entrypoint-initdb.d       # 建表SQL持久化
+            - /etc/mysql:/etc/mysql                         # 配置文件持久化
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 30s
+            
+# -----------------------------
+# 自定义网络名：app_network
+# 比起默认网络，自定义网络会启动内置DNS服务，容器可直接通过服务名通信，可配置性高，安全性更佳
+# -----------------------------
+networks:
+    app_network:
+        driver: bridge
+
+# -----------------------------
+# 共享卷：容器之间通信
+# -----------------------------
+volumes:
+    dist:

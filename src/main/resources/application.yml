@@ -57,11 +57,6 @@ mybatis-plus:
     db-config:
       id-type: assign_id # 雪花主键（默认值）
       update-strategy: not_null # 更新策略：只更新非空字段
-###############################################################################
-# NCJD配置
-ncjd:
-  cookie-secure: false # 开发环境用Http
-###############################################################################
 # JWT配置
 jwt:
   secret: ${JWT_SECRET}
@@ -94,8 +89,6 @@ logging:
    level:
      # 根日志级别 (默认INFO)
      root: INFO
-     # 打印 SQL 语句
-     com.loogingko.ncjd.mapper: DEBUG
      # 或者打印所有 MyBatis 日志
 #     org.apache.ibatis: DEBUG
   

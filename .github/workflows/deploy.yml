@@ -42,3 +42,20 @@ jobs:
         run: |
           docker tag ncjd:latest ahornbeast/ncjd:latest
           docker push ahornbeast/ncjd:latest
+          
+######## 在服务器端执行命令：拉取镜像 ##########
+# 开启代理 (Docker不会读取全局代理)：/etc/systemd/system/docker.service.d/http-proxy.conf 
+# systemctl daemon-reload
+# systemctl restart docker
+# systemctl show docker --property Environment
+# netstat -tlnp | grep 1081
+
+# 本机ssh代理
+# ssh -R 1081:localhost:6666 root@47.116.37.204 -N
+# curl -x http://127.0.0.1:1081 https://www.google.com -v
+
+# 拉取镜像
+#  docker pull ahornbeast/ncjd:latest
+#  docker stop ncjd || true
+#  docker rm ncjd || true
+#  docker run -d -p 8080:8080 --name ncjd ahornbeast/ncjd:latest

@@ -1,0 +1,19 @@
+.git
+.gitignore
+.idea
+.vscode
+*.iml
+
+target
+logs
+*.log
+
+.env
+.env.*
+!.env.example
+
+# 忽略前端
+ui/
+
+README.md
+LICENSE
