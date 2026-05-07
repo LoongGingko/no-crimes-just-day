@@ -38,6 +38,14 @@ export const BASE_ROUTE: RouteRecordRaw = {
       component: () => import('@/views/grid/Grid.vue'),
     },
     {
+      path: 'manual',
+      name: 'Manual',
+      meta: {
+        isAjax: 1,
+      },
+      component: () => import('@/views/manual/Manual.vue'),
+    },
+    {
       path: 'furry',
       name: 'Furry',
       component: () => import('@/views/NotFound.vue'),

@@ -14,10 +14,14 @@
         </div>
         <div class="flex flex-wrap items-center gap-3 text-sm text-slate-300">
           <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">SpringBoot</span>
+          <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">MyBatis-Plus</span>
           <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">MySQL</span>
           <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">Redis</span>
+          <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">Nginx</span>
+          <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">Axios</span>
           <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">JWT</span>
           <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">Vue 3</span>
+          <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">Vite</span>
           <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">Tailwind</span>
           <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">Three.js</span>
         </div>

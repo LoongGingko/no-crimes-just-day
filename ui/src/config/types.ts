@@ -25,6 +25,7 @@ export interface MyStoreState {
   furry_mode: boolean;
   curr_module: string;
   curr_search: string;
+  pre_route: string;
   logged: boolean;
   loggedErr: string;
   userid: string;

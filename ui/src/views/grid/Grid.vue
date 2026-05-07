@@ -5,10 +5,10 @@
 
 <template>
   <div>
-    <div class="relative mx-auto mt-4 max-w-5xl px-6 py-24 lg:px-12">
+    <div class="relative mx-auto max-w-5xl px-6 py-24 lg:px-12">
       <!-- 顶部搜索 / 按钮 -->
-      <section class="mb-8 flex flex-col items-end gap-4 rounded-3xl p-6 pr-0 md:flex-row md:items-center md:justify-between">
-        <div class="self-start text-3xl font-semibold">导航页</div>
+      <section class="my-12 ml-6 flex flex-col items-end gap-4 rounded-3xl md:flex-row md:items-center md:justify-between">
+        <div class="self-start text-3xl font-semibold tracking-wide">导航页</div>
         <div class="flex flex-col items-end gap-3 md:flex-row md:items-center">
           <n-input round placeholder="搜索" />
           <!-- <div @click="openDialog()" class="ncjd-btn-2 ncjd-text ncjd-ring text-nowrap rounded-full px-4 py-2">新增</div> -->

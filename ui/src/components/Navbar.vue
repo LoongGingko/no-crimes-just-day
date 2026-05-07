@@ -16,7 +16,7 @@
               :exit="{ opacity: 0 }"
               :whilePress="{ scale: 0.95, transition: { duration: 0.1 } }"
               :transition="{ duration: 0.3, ease: 'easeInOut' }"
-              class="ncjd-card ncjd-hover rounded-full p-2.5 backdrop-blur-xl md:p-[11.5px]"
+              class="ncjd-card ncjd-hover rounded-full p-2.5 backdrop-blur-sm md:p-[11.5px]"
               @click="goBack()"
               ><ChevronLeft />
             </motion.button>
@@ -40,7 +40,7 @@
               :animate="{ opacity: 1 }"
               :exit="{ opacity: 0 }"
               :whilePress="{ scale: 0.95, transition: { duration: 0.1 } }"
-              class="ncjd-card ncjd-hover rounded-full p-2.5 backdrop-blur-xl md:p-[11.5px]"
+              class="ncjd-card ncjd-hover rounded-full p-2.5 backdrop-blur-sm md:p-[11.5px]"
               @click="goBack()"
               ><ChevronLeft />
             </motion.button>
@@ -49,7 +49,7 @@
       </template>
       <!-- 中间导航栏 -->
       <nav
-        class="nav ncjd-card ml-3 flex overflow-x-auto overflow-y-hidden rounded-full px-5 backdrop-blur-xl transition-all duration-500 sm:overflow-x-hidden md:px-14"
+        class="nav ncjd-card ml-3 flex overflow-x-auto overflow-y-hidden rounded-full px-5 backdrop-blur-sm transition-all duration-500 sm:overflow-x-hidden md:px-14"
         :class="[isHovering ? 'mt-2.5 py-5' : 'mt-5 py-2.5', { 'flex-1': isMobile }]"
         ref="navRef"
         @mousemove="handleMouseMove"
@@ -66,7 +66,7 @@
           v-for="(link, index) in links"
           :key="index"
           class="flex shrink-0 basis-14 flex-col items-center md:basis-16"
-          @click="jump2Valid(link)"
+          @click="jump2Valid(link, $event)"
           :class="['nav-item', link.path === myStore.curr_module ? ' text-sky-400 dark:text-cyan-400' : 'text-slate-500 dark:text-slate-400 hover:dark:text-white']"
         >
           <!-- 图标 / 标签 -->
@@ -79,7 +79,7 @@
         <n-popover v-model:show="showPopover" trigger="click" display-directive="show" overlap :show-arrow="false" placement="top-end">
           <!-- 触发按钮 -->
           <template #trigger>
-            <motion.button :whilePress="{ scale: 0.95 }" :transition="{ duration: 0.1 }" class="ncjd-card ncjd-hover rounded-full p-2.5 backdrop-blur-xl md:p-[11.5px]">
+            <motion.button :whilePress="{ scale: 0.95 }" :transition="{ duration: 0.1 }" class="ncjd-card ncjd-hover rounded-full p-2.5 backdrop-blur-sm md:p-[11.5px]">
               <UserRound v-if="!myStore.logged" /><!-- 用户按钮（登录前） -->
               <EllipsisVertical v-else /><!-- 更多按钮（登录后） -->
             </motion.button>
@@ -89,6 +89,7 @@
             <div class="ncjd-card overflow-hidden rounded-[2rem] text-xl shadow-xl backdrop-blur-xl">
               <ul class="flex flex-col *:flex *:cursor-pointer *:items-center *:gap-x-[0.625em] *:py-[0.625em] *:pl-[1.25em] *:pr-[2.5em]">
                 <!-- 界面功能 -->
+                <li v-if="myStore.furry_mode" @click="closeImagebg" class="ncjd-hover2 first:pt-[0.9375em]"><EyeClosed class="svg-sm" />关闭图片背景</li>
                 <li @click="updTheme" class="ncjd-hover2 first:pt-[0.9375em]">
                   <template v-if="isDark"><Sun class="svg-sm" />浅色模式</template>
                   <template v-else><Moon class="svg-sm" />深色模式</template>
@@ -131,7 +132,6 @@ import {
   Maximize2,
   Minimize2,
   Heart,
-  Brain,
   Image,
   Star,
   CheckSquare,
@@ -141,6 +141,10 @@ import {
   Moon,
   ChevronLeft,
   UserRound,
+  LibraryBig,
+  Sprout,
+  ClosedCaption,
+  EyeClosed,
 } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -168,8 +172,8 @@ const links = [
   { path: '/tv', icon: Tv, label: '拟物TV', label_en: 'Formula Image\nScanner' },
   { path: '/grid', icon: LayoutGrid, label: '导航页', label_en: 'Home' },
   // { path: '/grid2', icon: LayoutGrid, label: '导航页2', label_en: 'Home' },
-  { invalid: true, path: '/ack', icon: Brain, label: '知识库', label_en: 'PDF\nScanner' },
-  { invalid: true, path: '/habit', icon: Heart, label: '习惯', label_en: 'PDF\nScanner' },
+  { path: '/manual', icon: LibraryBig, label: '手册', label_en: 'Manual' },
+  { invalid: true, path: '/habit', icon: Sprout, label: '习惯', label_en: 'PDF\nScanner' },
   { invalid: true, path: '/gallery', icon: Image, label: '相册', label_en: 'PDF\nScanner' },
   { invalid: true, path: '/clip', icon: Star, label: '剪藏', label_en: 'Formula Image\nScanner' },
   { invalid: true, path: '/todo', icon: CheckSquare, label: '待办', label_en: 'PDF\nScanner' },
@@ -231,7 +235,7 @@ const fullscreen = () => {
 };
 
 let timeId: any = null;
-const jump2Valid = (link: any) => {
+const jump2Valid = (link: any, event: any) => {
   myStore.setAttribute('curr_module', link.path); // 设置高亮
 
   // 手机端延时关闭导航栏
@@ -248,14 +252,39 @@ const jump2Valid = (link: any) => {
   }
 
   // 跳转页面
-  jump2(link.path);
+  if (event.ctrlKey) {
+    openWindow(link.path); // 新开一个页面
+  } else {
+    jump2(link.path);
+  }
 };
 
+const openWindow = (url: string, opts?: { target?: string; [key: string]: any }) => {
+  const { target = '_blank', ...others } = opts || {};
+  window.open(
+    url,
+    target,
+    Object.entries(others)
+      .reduce((preValue: string[], curValue) => {
+        const [key, value] = curValue;
+        return [...preValue, `${key}=${value}`];
+      }, [])
+      .join(',')
+  );
+};
+
+// 关闭图片背景
+const closeImagebg = () => {
+  myStore.setAttribute('furry_mode', false);
+};
+
+// 切换深色/浅色模式
 const updTheme = () => {
   appStore.toggleTheme(true);
   showPopover.value = false;
 };
 
+// 切换开发者断点状态
 const updDebug = (d: any) => {
   d.enable = !d.enable;
   myStore.updDebug(d.enable, d.key);
@@ -274,7 +303,6 @@ const login = () => {
 
 // 点击退出登录
 const logout = () => {
-  messager.success('已退出登录');
   myStore.logout();
   showPopover.value = false;
 };

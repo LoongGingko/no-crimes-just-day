@@ -8,7 +8,12 @@
 </template>
 
 <script setup lang="ts">
-import { NResult, NButton } from 'naive-ui';
+import { ref, computed, reactive, onBeforeUpdate, useTemplateRef, onMounted } from 'vue';
+import { NButton, NDialog, NForm, NFormItem, NInput } from 'naive-ui';
+import { CirclePlus } from 'lucide-vue-next';
+import { fmtUrl } from '@/utils/common';
+import Sortable from 'sortablejs';
+import { motion } from 'motion-v';
 </script>
 
 <style lang="less" scoped></style>

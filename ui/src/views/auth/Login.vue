@@ -177,7 +177,6 @@ const doLogin = async () => {
     loading.value = true;
     await http.req(isLogin.value ? '/login' : '/register', 'post', formData.value, (R: any) => {
       if (hasSucc(R)) {
-        debugger;
         myStore.login(R.data);
         jump2('/');
       }

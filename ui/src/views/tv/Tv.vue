@@ -628,12 +628,7 @@ const init = () => {
   lampWire.rotation.z = 0;
   scene.add(lampWire); // 添加灯泡上方的垂直电线
 
-  // 灯泡顶部的小金属帽（装饰）
-  const bulbCap = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.05, 0.04, 12), new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.7, roughness: 0.3 }));
-  bulbCap.position.y = 0.85;
-
   const lampGroup = new THREE.Group();
-  lampGroup.add(bulbCap);
   lampGroup.add(lampWarm);
   lampGroup.add(lampBulb);
   lampGroup.add(lampWire);

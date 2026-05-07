@@ -98,12 +98,12 @@ const execData = (R: any, callBack?: any) => {
 // 显示业务信息
 const http_msg = (R: any) => {
   if (isEmpty(R)) return;
-  const success = R.success || []; // 业务成功消息
-  const error = R.error || []; // 业务失败消息
+  const success = (R.success || []).join('/n'); // 业务成功消息
+  const error = (R.error || []).join('/n'); // 业务失败消息
   const msglength = (success ? success.length : 0) + (error ? error.length : 0);
   const eraseSeconds = 5000 + (1000 * msglength) / 20;
-  if (!isEmpty(success)) messager.success(success, { duration: eraseSeconds });
-  if (!isEmpty(error)) messager.error(error, { duration: eraseSeconds });
+  if (success) messager.success(success, { duration: eraseSeconds });
+  if (error) messager.error(error, { duration: eraseSeconds });
 };
 
 // 请求是否成功

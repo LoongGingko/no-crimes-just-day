@@ -8,6 +8,7 @@ import { verifyToken } from '@/api/interceptor';
 import { hasSucc, http } from '@/api/http';
 import { myCache } from '@/utils/cache';
 import { useMyStore } from '@/config/my-store';
+import { $HOST, addPath } from '@/utils/uri';
 
 // 基础页面
 const routes: RouteRecordRaw[] = [BASE_ROUTE, LOGIN_ROUTE, NOT_FOUND_ROUTE];
@@ -28,6 +29,11 @@ const whiteList = ['/noauth', '/'];
 router.beforeEach(async (to: RouteLocationNormalizedGeneric, from) => {
   const myStore = useMyStore();
   if (myStore.pingDebug('router')) debugger; // 开发者断点
+
+  // todo: 加载横条动画
+
+  // 路由前置操作（重置全局缓存、上一页、滚动条等）
+  beforeRoute();
 
   // 1. 白名单
   // if (whiteList.includes(to.path)) return true;
@@ -63,13 +69,21 @@ router.beforeEach(async (to: RouteLocationNormalizedGeneric, from) => {
   return true; // 成功跳转
 });
 
+// 路由前置操作（重置全局缓存、上一页、滚动条等）
+function beforeRoute() {
+  const myStore = useMyStore();
+  myStore.setAttribute('pre_route', '');
+  myCache.clear();
+}
+
 // 打开有ajax请求的页面
 async function asyncAjax(to: RouteLocationNormalizedGeneric) {
-  const path = '/pre' + to.path;
+  const url = addPath($HOST, useMyStore().curr_module, '/pre', to.path);
   // 入口ajax函数(异步)
-  const retBol = await http.req(path, 'post', to.query, (data: any) => {
-    if (hasSucc(data)) {
-      myCache.set('model', data);
+  const retBol = await http.req(url, 'post', to.query, (R: any) => {
+    if (hasSucc(R)) {
+      myCache.set('model', R.data);
+      myCache.set('modelExtra', R.extra);
     }
   });
   return retBol; // 如果运行失败，返回undefined

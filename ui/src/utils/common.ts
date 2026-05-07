@@ -5,6 +5,7 @@
 
 import { nextTick, ref } from 'vue';
 import router from '../router';
+import { useMyStore } from '@/config/my-store';
 
 // =============================================================================
 //                                 业务工具
@@ -17,13 +18,8 @@ import router from '../router';
 //                                 路由工具
 // =============================================================================
 // 刷新当前路由
-// export const isRouterAlive = ref(true);
 export const routerSalt = ref(0);
 export function reloadRouter() {
-  // isRouterAlive.value = false;
-  // nextTick(() => {
-  //   isRouterAlive.value = true;
-  // });
   routerSalt.value = Date.now();
 }
 
@@ -35,7 +31,12 @@ export function jump2(path: string, reload?: boolean) {
 
 // 跳转到上个路由
 export function goBack(reload?: boolean) {
-  router.back();
+  const myStore = useMyStore();
+  if (isEmpty(myStore.pre_route)) {
+    router.push({ path: '/' });
+  } else {
+    router.push({ path: myStore.pre_route });
+  }
   if (reload) reloadRouter();
 }
 

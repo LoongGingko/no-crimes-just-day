@@ -12,7 +12,13 @@
     </n-layout-header>
     <!-- 页面视图 -->
     <n-layout-content>
-      <blob /><!-- 背景光斑 --><!-- 全局滚动条 -->
+      <!-- 渐变色背景 -->
+      <Gradient />
+      <!-- 光斑背景 -->
+      <Blob class="-z-40" />
+      <!-- 图片背景 -->
+      <Imagebg v-if="myStore.furry_mode" class="-z-50" />
+      <!-- 全局滚动条 -->
       <n-scrollbar style="max-height: 100vh">
         <router-view v-slot="{ Component, route }">
           <AnimatePresence mode="sync">
@@ -56,6 +62,8 @@ import { useMyStore } from '@/config/my-store';
 import { AnimatePresence } from 'motion-v';
 import { NLayout, NLayoutContent, NLayoutHeader, NScrollbar } from 'naive-ui';
 import Blob from '@/components/Blob.vue';
+import Gradient from '@/components/Gradient.vue';
+import Imagebg from '@/components/Imagebg.vue';
 import { routerSalt } from '@/utils/common';
 
 const myStore = useMyStore();

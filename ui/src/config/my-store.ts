@@ -15,6 +15,7 @@ export const useMyStore = defineStore(STORAGE_KEY, {
     furry_mode: false, // 福瑞模式 (链接分享)
     curr_module: '/', // 当前导航栏 (用于高亮显示)
     curr_search: '', // 当前搜索值 (实现简易事件总线：赋值触发搜索, 搜索完成重置)
+    pre_route: '', // 上个页面（返回的目标路径）
     // 登录
     logged: false, // 是否登录
     loggedErr: '', // 登录错误消息 (用于JWT认证失败后提示)
@@ -55,16 +56,24 @@ export const useMyStore = defineStore(STORAGE_KEY, {
       this.nickname = data.nickname;
       this.persist();
     },
-    logout(msg?: string) {
-      // 请求后端删除jwt cookie
-      http.req('/logout', 'post', { username: this.username }, () => {
-        this.logged = false;
-        this.loggedErr = msg ?? '';
-        this.userid = '';
-        this.username = '';
-        this.nickname = '';
-        this.persist();
-      });
+    logout() {
+      if (this.logged) {
+        // 请求后端删除jwt cookie
+        http.req('/logout', 'post', { username: this.username }, () => {
+          this.resetLogout();
+        });
+      } else {
+        this.resetLogout(); // 不发请求，仅重置前端
+      }
+    },
+    // 重置前端登录状态
+    resetLogout() {
+      this.logged = false;
+      this.loggedErr = '';
+      this.userid = '';
+      this.username = '';
+      this.nickname = '';
+      this.persist();
     },
     // 开发者选项
     initDebug(debugs: any) {

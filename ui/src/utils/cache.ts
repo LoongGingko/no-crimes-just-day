@@ -1,6 +1,6 @@
 /**
  * @author       LiuRunYu 2026-04-29
- * @description  全局缓存
+ * @description  全局缓存（刷新后丢失）
  */
 
 import { isEmpty } from './common';
@@ -8,6 +8,7 @@ import { isEmpty } from './common';
 // utils/cache.js
 class Cache {
   private cache: Map<string, any>;
+
   constructor() {
     this.cache = new Map();
   }
@@ -20,6 +21,7 @@ class Cache {
   //     this.cache.set(key, value);
   //   }
   // }
+
   set(key: string, value: any) {
     this.cache.set(key, value);
   }
@@ -61,3 +63,8 @@ class Cache {
 
 // 导出单例
 export const myCache = new Cache();
+
+// 获取后台传值
+export function getModel() {
+  return myCache.get('model');
+}

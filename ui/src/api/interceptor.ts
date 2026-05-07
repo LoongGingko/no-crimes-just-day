@@ -83,10 +83,8 @@ function toastError(error: any, text: any) {
 // 未提供Token、Token过期、Token无效...
 function errToken(msg: any) {
   return new Promise(resolve => {
-    const myStore = useMyStore();
-    myStore.logout();
+    useMyStore().logout();
     resolve({ error: msg.detail });
-    console.log('token失效, 已退出登录');
     // router.push('/noauth'); // 跳转到noauth失败页
   });
 }

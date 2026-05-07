@@ -5,7 +5,7 @@
 
 import { useAppStore } from '@/config/app-store';
 import { useDebounceFn } from '@vueuse/core';
-import { onMounted, onBeforeMount, onBeforeUnmount } from 'vue';
+import { onMounted, onBeforeMount, onBeforeUnmount, ref } from 'vue';
 
 // 开启响应式，兼容PC & 移动端
 export function useResponsive() {
@@ -46,5 +46,16 @@ export function useDarkOnce() {
   });
   onBeforeUnmount(() => {
     if (!isDarkBefore) appStore.toggleTheme(false);
+  });
+}
+
+// 仅该页面为渐变背景
+export const showGradient = ref(false);
+export function useGradientOnce() {
+  onBeforeMount(() => {
+    showGradient.value = true;
+  });
+  onBeforeUnmount(() => {
+    showGradient.value = false;
   });
 }
