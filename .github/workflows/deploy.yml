@@ -31,6 +31,12 @@ jobs:
       - name: 3.2 使用Maven构建项目（跳过测试以加快速度）
         run: mvn clean package -DskipTests
 
+      - name: 查看是否有目录
+        run: |
+          ls -l target
+          ls -l
+          ls -l ../
+
       - name: 4. 构建Docker镜像
         run: docker build -t ncjd:latest .
 
