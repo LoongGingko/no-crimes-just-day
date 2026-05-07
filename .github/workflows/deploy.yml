@@ -19,36 +19,15 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+          cache: maven # 开启 Maven 缓存以加快速度
 
-      - name: 3.1 使用Maven缓存
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: 3.2 使用Maven构建项目（跳过测试以加快速度）
+      - name: 3. 使用Maven构建项目（跳过测试以加快速度）
         run: mvn clean package -DskipTests
-
-      - name: 查看是否有目录
-        run: |
-          ls -l target
-          ls -l
-          ls -l ../
 
       - name: 4. 构建Docker镜像
         run: docker build -t ncjd:latest .
 
-      - name: 5.1 检查密钥是否读取
-        run: |
-          if [ -n "${{ secrets.DOCKER_USER }}" ]; then
-            echo "DOCKER_USER exists"
-          else
-            echo "DOCKER_USER is empty"
-          fi
-
-      - name: 5.2 登录到Docker Hub
+      - name: 5 登录到Docker Hub
         run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
 
       - name: 6. 推送镜像

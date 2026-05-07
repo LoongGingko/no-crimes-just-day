@@ -8,8 +8,11 @@ FROM eclipse-temurin:17-jre-alpine
 # 执行目录
 WORKDIR /app
 
-# 创建spring用户 (避免root运行导致的权限过大问题，生产环境必备)
-RUN addgroup -S spring && adduser -S spring -G spring
+# 创建日志目录，同时创建spring用户 (避免root运行导致的权限过大问题，生产环境必备)
+RUN addgroup -S spring \
+    && adduser -S spring -G spring \
+    && mkdir -p /logs \
+    && chown -R spring:spring /app /logs
 
 # 环境变量
 ENV SPRING_PROFILES_ACTIVE=prod \
@@ -17,9 +20,6 @@ ENV SPRING_PROFILES_ACTIVE=prod \
 
 # 只复制jar包
 COPY target/*.jar app.jar
-
-# 创建日志目录，改成spring用户
-RUN mkdir -p /logs && chown -R spring:spring /app /logs
 
 # 后续操作都由spring用户执行，包括启动Java (生产环境必备)
 USER spring
@@ -30,4 +30,3 @@ ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
 
 # 默认命令
 CMD ["bash"]
-
