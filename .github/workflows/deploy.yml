@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 1. 检出代码仓库
+      - name: 1. 复制我的仓库到虚拟机
         uses: actions/checkout@v4
 
       - name: 2. 配置Java环境（JDK 17）
@@ -19,16 +19,25 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      
+          cache: maven # 开启 Maven 缓存以加快速度
+
       - name: 3. 使用Maven构建项目（跳过测试以加快速度）
         run: mvn clean package -DskipTests
-      
+
       - name: 4. 构建Docker镜像
         run: docker build -t ncjd:latest .
-        
-      - name: 5. 登录到Docker Hub
+
+      - name: 5.1 检查密钥是否读取
+        run: |
+          if [ -n "${{ secrets.DOCKER_USER }}" ]; then
+            echo "DOCKER_USER exists"
+          else
+            echo "DOCKER_USER is empty"
+          fi
+
+      - name: 5.2 登录到Docker Hub
         run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
-        
+
       - name: 6. 推送镜像
         run: |
           docker tag ncjd:latest ahornbeast/ncjd:latest
