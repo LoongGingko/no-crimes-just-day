@@ -4,7 +4,7 @@ spring:
     import: optional:file:.env.dev[.properties]
 
 ncjd:
-  cookie-secure: false
+  cookie-secure: false # 开发环境用HTTP
 
 logging:
   level:

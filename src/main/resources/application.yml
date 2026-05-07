@@ -57,6 +57,11 @@ mybatis-plus:
     db-config:
       id-type: assign_id # 雪花主键（默认值）
       update-strategy: not_null # 更新策略：只更新非空字段
+###############################################################################
+# NCJD配置
+ncjd:
+  cookie-secure: true # 生产环境用Https
+###############################################################################
 # JWT配置
 jwt:
   secret: ${JWT_SECRET}

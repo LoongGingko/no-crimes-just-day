@@ -1,7 +1,8 @@
 -- created by LiuRunYu 2026-04-07
 
 -- 创建数据库
-create schema ncjd collate utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS ncjd CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE ncjd;
 
 CREATE TABLE `sys_user` (
     `id` BIGINT NOT NULL COMMENT '主键ID（雪花算法生成）',

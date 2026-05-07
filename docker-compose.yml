@@ -8,10 +8,10 @@
 # 删除容器	  docker compose rm
 # 停止运行	  docker compose down (-v 同时删除卷)
 # 重  启	  docker compose restart
-# 查看状态	  docker compose ps
+# 查看状态	  docker compose ps (-a 含已关闭容器)
 # 实时日志	  docker compose logs -f --tail=100 (-f 实时跟踪 --tail 最后N行日志)
-# 进入容器	  docker compose exec ncjd-app sh
-# 更新镜像	  docker compose pull && docker compose up -d
+# 进入容器	  docker compose exec mariadb bash (必须是服务名！)
+# 更新镜像	  docker pull ahornbeast/ncjd:latest
 
 
 services:
@@ -43,8 +43,9 @@ services:
             options:
                 max-size: "20m"
                 max-file: "3"
-#        volumes:
-#            - /usr/local/tomcat/logs:/usr/local/tomcat/logs
+        volumes:
+            - /opt/ncjd/logs:/app/logs
+            - /opt/ncjd/files:/app/files
 #            - /usr/local/tomcat/conf:/usr/local/tomcat/conf
 #            # - /usr/local/tomcat/work:/usr/local/tomcat/work
 #            # - /usr/local/tomcat/temp:/usr/local/tomcat/temp
