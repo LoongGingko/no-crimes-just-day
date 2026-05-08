@@ -5,7 +5,7 @@
 
 import { useAppStore } from '@/config/app-store';
 import { useDebounceFn } from '@vueuse/core';
-import { onMounted, onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
 
 // 开启响应式，兼容PC & 移动端
 export function useResponsive() {

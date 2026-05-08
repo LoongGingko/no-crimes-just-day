@@ -8,7 +8,7 @@ import { verifyToken } from '@/api/interceptor';
 import { hasSucc, http } from '@/api/http';
 import { myCache } from '@/utils/cache';
 import { useMyStore } from '@/config/my-store';
-import { $HOST, addPath } from '@/utils/uri';
+import { $HOST, addPath, getUriBean, type UriBean } from '@/utils/uri';
 
 // 基础页面
 const routes: RouteRecordRaw[] = [BASE_ROUTE, LOGIN_ROUTE, NOT_FOUND_ROUTE];
@@ -28,6 +28,7 @@ const whiteList = ['/noauth', '/'];
 // 创建路由守卫
 router.beforeEach(async (to: RouteLocationNormalizedGeneric, from) => {
   const myStore = useMyStore();
+  const ub = getUriBean(to.path); // URI解析对象
   if (myStore.pingDebug('router')) debugger; // 开发者断点
 
   // todo: 加载横条动画
@@ -35,14 +36,14 @@ router.beforeEach(async (to: RouteLocationNormalizedGeneric, from) => {
   // 路由前置操作（重置全局缓存、上一页、滚动条等）
   beforeRoute();
 
-  // 1. 白名单
+  // 1. isAuth = 需登录
   // if (whiteList.includes(to.path)) return true;
 
-  // 2. 刷新时校验令牌
+  // 2. 路由时校验令牌
   if (myStore.logged) verifyToken();
 
-  // 3. 打开页面是否有后台请求
-  if (to.meta.isAjax) await asyncAjax(to);
+  // 3. isAjax = 先通过后台请求
+  if (to.meta.isAjax) await asyncAjax(ub, to);
 
   // 尝试登录
   // if (to.path === '/auth') {
@@ -66,27 +67,37 @@ router.beforeEach(async (to: RouteLocationNormalizedGeneric, from) => {
   //   return "/"; // 跳转到无状态首页
   // }
 
+  // 路由成功前置操作
+  beforeSucc(ub);
   return true; // 成功跳转
 });
 
 // 路由前置操作（重置全局缓存、上一页、滚动条等）
 function beforeRoute() {
-  const myStore = useMyStore();
-  myStore.setAttribute('pre_route', '');
+  // const myStore = useMyStore();
   myCache.clear();
 }
 
 // 打开有ajax请求的页面
-async function asyncAjax(to: RouteLocationNormalizedGeneric) {
-  const url = addPath($HOST, useMyStore().curr_module, '/pre', to.path);
+async function asyncAjax(ub: UriBean, to: RouteLocationNormalizedGeneric) {
+  const { path, query } = to;
+  const url = addPath($HOST, ub.module, '/pre', path);
   // 入口ajax函数(异步)
-  const retBol = await http.req(url, 'post', to.query, (R: any) => {
+  const retBol = await http.req(url, 'post', query, (R: any) => {
     if (hasSucc(R)) {
       myCache.set('model', R.data);
       myCache.set('modelExtra', R.extra);
     }
   });
   return retBol; // 如果运行失败，返回undefined
+}
+
+// 路由成功前置操作 (进入页面前，设置myStore变量)
+function beforeSucc(ub: UriBean) {
+  const myStore = useMyStore();
+  const { module } = ub;
+  myStore.setAttribute('pre_route', '');
+  myStore.setAttribute('curr_module', module);
 }
 
 // export async function beforeRouteEnter(ub: UriBean, to: TYObj) {

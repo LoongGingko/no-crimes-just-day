@@ -45,10 +45,9 @@ onMounted(() => {
 
 <style lang="less" scoped>
 .gradient {
-  background-image: linear-gradient(rgb(209 221 244 / 80%), rgb(163 184 211 / 80%), rgb(119 148 179 / 90%), rgb(73 114 147 / 90%), rgb(14 81 117 / 90%));
-  /* background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover; */
+  background:
+    radial-gradient(ellipse 768px 50% at 20% -10%, rgba(210, 81, 60, 0.85) 0%, rgba(232, 168, 130, 0.85) 50%, transparent 100%),
+    radial-gradient(ellipse 40% 40% at 85% 40%, rgba(156, 160, 189, 0.85) 0%, transparent 100%), linear-gradient(160deg, #e5ecef 0%, #d3c4b6 20%, #e5ecef 100%);
 }
 
 .gradient-dark {

@@ -29,3 +29,8 @@ myStore.hydrate();
 app.use(MotionPlugin);
 
 app.mount('#app');
+
+// -------- 笔记 ---------------
+// h 函数重载：
+// 2个参数：若第2个参数为对象非数组则为 props，否则为 children（字符串、数组、null）
+// 3个参数：第2个为 props、第3个为 children。
