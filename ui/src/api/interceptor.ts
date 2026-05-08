@@ -59,12 +59,14 @@ function errHandler(error: any) {
   // 区分response的error和纯error
   const { response } = error;
   const status = response?.status ?? error.status; // ?? 只在左侧是 null 或 undefined 时才取右侧值。
-  const msg = response?.statusText;
-  const text = typeof msg === 'object' ? msg.message : (msg ?? '未知错误');
+  const msg = response?.statusText || '未知错误';
+  const text = typeof msg === 'object' ? msg.message : msg;
   // 返回Promise对象
   switch (status) {
-    case 401: // 错误码401: 未提供Token、Token过期、Token无效...
-      return errToken(msg);
+    case 401:
+      return errToken('401 : 未登录（Token无效）');
+    case 403:
+      return errToken('403 : 已登录，权限不足');
     case 500: // 错误码500: 服务器内部错误
       return toastError(error, '500 : Internal Server Error');
     default: // 其他请求错误
@@ -72,7 +74,7 @@ function errHandler(error: any) {
   }
 }
 
-// 显示错误(如有多个ajax错误，Alert窗口会显示所有错误)
+// 显示错误
 function toastError(error: any, text: any) {
   return new Promise(reject => {
     messager.error(text);
@@ -80,11 +82,12 @@ function toastError(error: any, text: any) {
   });
 }
 
-// 未提供Token、Token过期、Token无效...
-function errToken(msg: any) {
+// 未登录 / 已登录但权限不足
+function errToken(text: string) {
   return new Promise(resolve => {
     useMyStore().logout();
-    resolve({ error: msg.detail });
+    messager.error(text);
+    resolve({ error: text });
     // router.push('/noauth'); // 跳转到noauth失败页
   });
 }

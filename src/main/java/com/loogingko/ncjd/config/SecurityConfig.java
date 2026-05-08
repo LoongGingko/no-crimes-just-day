@@ -2,7 +2,9 @@ package com.loogingko.ncjd.config;
 
 import com.loogingko.ncjd.filter.JwtAuthFilter;
 import com.loogingko.ncjd.service.auth.NCJDUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * SpringSecurity 安全配置
  * @author LiuRunYu 2026-04-10
  */
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,14 +32,17 @@ public class SecurityConfig {
     private final NCJDUserDetailsService userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
 
-    // 放行接口白名单
+    // 免登白名单
     public static final String[] EXCLUDE_PATHS = {
-        "/ping",            // 检测后台心跳
-        "/captcha",         // 图形验证码
-        "/login",           // 登录
-        "/register",        // 注册
-        "/logout",          // 退出登录
-//        "/error"            // 错误
+            // 系统
+            "/ping",            // 检测后台心跳
+            "/captcha",         // 图形验证码
+            // 登录
+            "/login",           // 登录
+            "/register",        // 注册
+            "/logout",          // 退出登录
+            // 模块
+//            "/manual"           // 手册
     };
     
     @Bean
@@ -66,7 +72,25 @@ public class SecurityConfig {
                         .anyRequest().authenticated()  // 其他任何接口都需要登录
                 )
                 // 注册 JWT 过滤器
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                
+                // 异常处理
+                .exceptionHandling(ex -> ex
+                        // 未登录（无token/token无效）→ 401
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.getWriter().write("{\"code\":401,\"message\":\"未登录或登录已过期\"}"); // 前端拿到的data
+                            log.warn("{\"code\":401,\"message\":\"未登录或登录已过期\"}");
+                        })
+                        // 已登录但权限不足 → 403
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.getWriter().write("{\"code\":403,\"message\":\"无访问权限\"}");
+                            log.warn("{\"code\":403,\"message\":\"无访问权限\"}");
+                        })
+                );
 
         return http.build();
     }
