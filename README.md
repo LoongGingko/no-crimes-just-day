@@ -4,7 +4,7 @@
 Fullstack project based on Java & Vue3
 
 ##### Backend
-
+- Java 17
 - SpringBoot 3
 - Spring Security 3
 - MyBatis-Plus

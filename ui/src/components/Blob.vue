@@ -1,222 +1,165 @@
 <!--
   @author       LiuRunYu 2026-04-12
-  @description  动态光斑背景
+  @description  动态光斑背景（Canvas 版）
 -->
 <template>
-  <div class="blob-container" ref="blobRef" />
+  <canvas ref="canvasRef" class="blob-canvas" />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { useAppStore } from '@/config/app-store';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 
-const blobRef = ref(null);
-let animationId = -1;
+let animId = 0;
+const appStore = useAppStore();
+const canvasRef = ref<HTMLCanvasElement | null>(null);
+const isDark = computed(() => appStore.theme !== 'light');
 
-class BlobApp {
-  // 类变量
-  ref = null as any;
-  blobs = [] as any[];
-  isMobile = window.innerWidth <= 640;
+const W = () => window.innerWidth;
+const H = () => window.innerHeight;
+const isMobile = W() <= 640;
+const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
-  constructor(ref: any) {
-    this.ref = ref;
-    this.blobs = [];
-  }
-
-  // 创建光斑div
-  createBlob(i: number) {
-    const blob = document.createElement('div');
-    const isMobile = this.isMobile;
-
-    // 颜色：高饱和度，适合流光效果
-    const hue = Math.random() * 360;
-    const saturation = 60 + Math.random() * 35; // 60-95%
-    const lightness = 50 + Math.random() * 30; // 50-80%
-
-    // 尺寸：200px - 700px
-    const minSize = isMobile ? 120 : 200;
-    const maxSize = isMobile ? 260 : 700;
-    const size = minSize + Math.random() * (maxSize - minSize);
-
-    // 随机起始位置
-    const startX = Math.random() * window.innerWidth;
-    const startY = Math.random() * window.innerHeight;
-
-    // 动画参数
-    const duration = 15 + Math.random() * 15; // 15-30秒，更慢更飘逸
-    const delay = Math.random() * -30; // 随机起始点
-
-    const rangeX = isMobile ? 80 + Math.random() * 120 : 300 + Math.random() * 400;
-    const rangeY = isMobile ? 60 + Math.random() * 90 : 200 + Math.random() * 400;
-
-    // 存储动画参数供 requestAnimationFrame 使用
-    const speed = {
-      speedX: 0.2 + Math.random() * 0.3,
-      speedY: 0.15 + Math.random() * 0.35,
-      scaleSpeed: 0.5 + Math.random() * 1,
-    };
-    const speed2 = {
-      speedX: 0.1 + Math.random() * 0.1,
-      speedY: 0.05 + Math.random() * 0.1,
-      scaleSpeed: 0.1 + Math.random() * 0.5,
-    };
-
-    const blobData = {
-      element: blob,
-      hue,
-      saturation,
-      lightness,
-      size,
-      startX,
-      startY,
-      duration,
-      delay,
-      rangeX,
-      rangeY,
-      startTime: null,
-      // 随机运动曲线参数
-      ...speed2,
-      opacityBase: 0.3 + Math.random() * 0.4,
-    };
-
-    const blurAmount = isMobile ? 26 : 40;
-    const brightness = isMobile ? 1.1 : 1.2;
-    const opacityStart = 0.7;
-
-    blob.style.cssText = `
-      position: absolute;
-      width: ${size}px;
-      height: ${size}px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%,
-        hsla(${hue}, ${saturation}%, ${lightness}%, ${opacityStart}),
-        hsla(${hue}, ${saturation}%, ${Math.max(lightness - 24, 20)}%, 0)
-      );
-      filter: blur(${blurAmount}px) brightness(${brightness});
-      mix-blend-mode: screen;
-      pointer-events: none;
-      will-change: transform, background;
-      transform: translate3d(0, 0, 0) scale(1);
-      left: 0;
-      top: 0;
-    `;
-
-    this.ref.appendChild(blob);
-    return blobData;
-  }
-
-  // 创建若干光斑
-  init() {
-    const blobCount = this.isMobile ? 5 : Math.floor(Math.random() * 5) + 6;
-
-    for (let i = 0; i < blobCount; i++) {
-      this.blobs.push(this.createBlob(i));
-    }
-  }
-
-  // 每秒执行60次，改变轨迹颜色大小
-  animate(currentTime: number) {
-    for (const blob of this.blobs) {
-      if (blob.startTime === null) {
-        blob.startTime = currentTime;
-      }
-
-      // 计算进度（考虑延迟）
-      const progress = (currentTime - blob.startTime) / 1000 + blob.delay;
-
-      // 使用正弦余弦创建平滑的 Lissajous 曲线运动
-      const x = blob.startX + Math.sin(progress * blob.speedX) * blob.rangeX + Math.cos(progress * 0.7) * (blob.rangeX * 0.3);
-
-      const y = blob.startY + Math.cos(progress * blob.speedY) * blob.rangeY + Math.sin(progress * 0.5) * (blob.rangeY * 0.3);
-
-      // 动态缩放（在 0.7 到 1.3 倍之间变化）
-      const scale = 0.8 + Math.sin(progress * blob.scaleSpeed) * 0.3;
-
-      // 动态改变颜色（轻微色相漂移）
-      const hueShift = Math.sin(progress * 0.3) * 30;
-      const currentHue = (blob.hue + hueShift + 360) % 360;
-
-      // 动态透明度（呼吸效果）
-      const opacity = blob.opacityBase + Math.sin(progress * 0.5) * 0.15;
-
-      // 应用变换
-      blob.element.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
-      blob.element.style.background = `radial-gradient(circle at 30% 30%,
-        hsla(${currentHue}, ${blob.saturation}%, ${blob.lightness}%, ${opacity}),
-        hsla(${currentHue}, ${blob.saturation}%, ${blob.lightness - 25}%, ${opacity * 0.6})
-      )`;
-
-      // 如果超出屏幕太远，重置位置
-      if (x < -blob.size || x > window.innerWidth + blob.size || y < -blob.size || y > window.innerHeight + blob.size) {
-        blob.startX = Math.random() * window.innerWidth;
-        blob.startY = Math.random() * window.innerHeight;
-        blob.startTime = null;
-      }
-    }
-  }
-
-  // 清理所有光斑元素
-  destroy() {
-    this.blobs.forEach(blob => {
-      if (blob.element && blob.element.parentNode) {
-        blob.element.parentNode.removeChild(blob.element);
-      }
-    });
-    this.blobs = [];
-  }
+// 单个光斑的数据结构
+interface Blob {
+  startX: number;
+  startY: number; // 起始坐标
+  hue: number;
+  sat: number;
+  _sat: number;
+  lightness: number; // 色相、饱和度、亮度
+  size: number; // 基础半径
+  vx: number;
+  vy: number; // 运动频率
+  rx: number;
+  ry: number; // 运动振幅
+  vs: number; // 缩放速度
+  ob: number; // 基础透明度
+  offsetTime: number; // 时间偏移秒
+  hs: number; // 色相漂移速度
+  startTime: number; // 动画起始时间戳
 }
 
-let blobApp = null as any;
+// 工具函数：生成 [a, b) 区间随机数
+const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
-// 动画无限循环
-const animateFrame = (timestamp: number) => {
-  if (blobApp) {
-    blobApp.animate(timestamp);
-    animationId = requestAnimationFrame(animateFrame);
-  }
+// 初始化所有光斑
+const blobs: Blob[] = Array.from({ length: isMobile ? 5 : Math.floor(Math.random() * 4) + 4 }, () => ({
+  startX: Math.random() * W(),
+  startY: Math.random() * H(),
+  hue: Math.random() * 360,
+  sat: rand(66, 100),
+  _sat: rand(66, 100),
+  lightness: rand(50, 80),
+  size: rand(isMobile ? 120 : 200, isMobile ? 260 : 600),
+  vx: rand(0.1, 0.2),
+  vy: rand(0.05, 0.15),
+  rx: isMobile ? rand(80, 200) : rand(300, 700),
+  ry: isMobile ? rand(60, 150) : rand(200, 600),
+  vs: rand(0.1, 0.6),
+  ob: rand(0.3, 0.7),
+  offsetTime: rand(-30, 0),
+  hs: rand(8, 20),
+  startTime: 0,
+}));
+
+// 画布尺寸跟随窗口，应用设备像素比
+const resize = () => {
+  const c = canvasRef.value;
+  if (!c) return;
+  c.width = W() * dpr;
+  c.height = H() * dpr;
+  c.style.width = W() + 'px';
+  c.style.height = H() + 'px';
+  // 缩放上下文，让绘制坐标直接用 CSS 像素
+  c.getContext('2d')!.setTransform(dpr, 0, 0, dpr, 0, 0);
 };
 
-// 窗口resize事件，确保光斑不会跑出屏幕
-const handleResize = () => {
-  if (blobApp) {
-    blobApp.blobs.forEach((blob: any) => {
-      blob.startX = Math.min(Math.max(blob.startX, -blob.size), window.innerWidth + blob.size);
-      blob.startY = Math.min(Math.max(blob.startY, -blob.size), window.innerHeight + blob.size);
-    });
+// 每帧绘制：计算位置 → 创建渐变 → 填充圆形
+const draw = (now: number) => {
+  const c = canvasRef.value;
+  if (!c) return;
+  const ctx = c.getContext('2d')!;
+  const w = W(),
+    h = H();
+
+  // 清空画布，用叠加模式让光斑互相增亮
+  ctx.clearRect(0, 0, w, h);
+  ctx.globalCompositeOperation = 'lighter';
+
+  for (const blob of blobs) {
+    if (!blob.startTime) blob.startTime = now;
+    const timed = (now - blob.startTime) / 1000 + blob.offsetTime; // 这个光斑已经运动了多少秒
+
+    // 用正弦/余弦组合出 Lissajous 曲线轨迹
+    const x = blob.startX + Math.sin(timed * blob.vx) * blob.rx + Math.cos(timed * 0.7) * blob.rx * 0.3;
+    const y = blob.startY + Math.cos(timed * blob.vy) * blob.ry + Math.sin(timed * 0.5) * blob.ry * 0.3;
+    // 呼吸式缩放和透明度波动
+    const scale = 0.6 + Math.sin(timed * blob.vs) * 0.3; // 基础缩放 60%，上下浮动30%
+    const op = blob.ob + Math.sin(timed * 0.5) * 0.15; // 上下波动 ±0.15，频率固定为 0.5
+    // 色相随时间缓慢漂移
+    const hue = blob.hue + Math.sin(timed * 0.5) * 30;
+
+    // 飘出屏幕太远就随机重置位置
+    if (x < -blob.size || x > w + blob.size || y < -blob.size || y > h + blob.size) {
+      blob.startX = Math.random() * w;
+      blob.startY = Math.random() * h;
+      blob.startTime = now;
+      continue;
+    }
+
+    const r = blob.size * scale;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+
+    // 中心轻微衰减，模拟 blur 后中心也不是绝对满值
+    g.addColorStop(0, `hsla(${hue},${blob.sat}%,${blob.lightness}%,${op * 0.9})`);
+    // 柔和缓慢衰减
+    g.addColorStop(0.4, `hsla(${hue},${blob.sat}%,${blob.lightness}%,${op * 0.8})`);
+    g.addColorStop(0.85, `hsla(${hue},${blob.sat}%,${blob.lightness}%,${op * 0.5})`);
+    // 70%~100%：快速衰减归零，模拟模糊边缘
+    g.addColorStop(1, `hsla(${hue},${blob.sat}%,${blob.lightness}%,0)`);
+
+    // 画一个填充圆
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
   }
+
+  animId = requestAnimationFrame(draw);
 };
 
+// 挂载时启动：设置画布尺寸、监听窗口变化、开始动画循环
 onMounted(() => {
-  if (blobRef.value) {
-    blobApp = new BlobApp(blobRef.value);
-    blobApp.init();
-    animationId = requestAnimationFrame(animateFrame);
-    window.addEventListener('resize', handleResize);
-  }
+  resize();
+  window.addEventListener('resize', resize);
+  animId = requestAnimationFrame(draw);
 });
 
+// 卸载时清理：取消动画帧、移除监听器
 onUnmounted(() => {
-  if (animationId) {
-    cancelAnimationFrame(animationId);
-  }
-  window.removeEventListener('resize', handleResize);
-  if (blobApp) {
-    blobApp.destroy();
-  }
+  cancelAnimationFrame(animId);
+  window.removeEventListener('resize', resize);
 });
+
+// 浅色模式降低饱和度
+watch(
+  isDark,
+  dark => {
+    for (const blob of blobs) {
+      blob.sat = dark ? blob._sat : blob._sat * 0.55;
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
-.blob-container {
+.blob-canvas {
   contain: paint;
-  filter: saturate(0.55);
   inset: 0;
   overflow: hidden;
   pointer-events: none;
   position: fixed;
-}
-
-html.dark .blob-container {
-  filter: saturate(1);
 }
 </style>
