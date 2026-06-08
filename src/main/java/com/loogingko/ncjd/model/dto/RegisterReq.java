@@ -4,8 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * 注册对象
+ * @author LiuRunYu 2026-04-10
+ */
 @Data
-public class LoginRequest {
+public class RegisterReq {
 
     @NotBlank(message = "用户名不能为空")
     @Size(min = 3, max = 20, message = "用户名长度3-20位")
@@ -15,6 +19,4 @@ public class LoginRequest {
     @Size(min = 6, max = 20, message = "密码长度6-20位")
     private String password;
 
-    @NotBlank(message = "验证码不能为空")
-    private String captcha;
 }

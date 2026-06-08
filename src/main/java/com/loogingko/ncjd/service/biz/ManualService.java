@@ -7,8 +7,8 @@ import com.loogingko.ncjd.constant.Constants;
 import com.loogingko.ncjd.mapper.ManualCategoryMapper;
 import com.loogingko.ncjd.mapper.ManualItemMapper;
 import com.loogingko.ncjd.model.bo.R;
-import com.loogingko.ncjd.model.entity.ManualCategory;
-import com.loogingko.ncjd.model.entity.ManualItem;
+import com.loogingko.ncjd.model.entity.ManualCategoryDO;
+import com.loogingko.ncjd.model.entity.ManualItemDO;
 import com.loogingko.ncjd.model.vo.ManualVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,14 +28,14 @@ public class ManualService {
     public R getManualList(String userId) {
         
         // 1. 一次性查询所有分类（包括用户自己的和公共的）
-        LambdaQueryWrapper<ManualCategory> categoryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<ManualCategoryDO> categoryWrapper = new LambdaQueryWrapper<>();
         categoryWrapper.and(wrapper -> wrapper
-                        .eq(ManualCategory::getUserId, userId)
+                        .eq(ManualCategoryDO::getUserId, userId)
                         .or()
-                        .eq(ManualCategory::getUserId, Constants.PUBLIC_USERID))
-                .orderByAsc(ManualCategory::getSort);
+                        .eq(ManualCategoryDO::getUserId, Constants.PUBLIC_USERID))
+                .orderByAsc(ManualCategoryDO::getSort);
 
-        List<ManualCategory> mcList = categoryMapper.selectList(categoryWrapper);
+        List<ManualCategoryDO> mcList = categoryMapper.selectList(categoryWrapper);
 
         if (CollUtil.isEmpty(mcList)) {
             return R.succ(Collections.emptyList());
@@ -43,22 +43,22 @@ public class ManualService {
 
         // 2. 批量查询所有分类下的条目（解决N+1问题）
         List<String> cateIds = mcList.stream()
-                .map(ManualCategory::getId)
+                .map(ManualCategoryDO::getId)
                 .collect(Collectors.toList());
 
-        LambdaQueryWrapper<ManualItem> itemWrapper = new LambdaQueryWrapper<>();
-        itemWrapper.in(ManualItem::getCateId, cateIds)
+        LambdaQueryWrapper<ManualItemDO> itemWrapper = new LambdaQueryWrapper<>();
+        itemWrapper.in(ManualItemDO::getCateId, cateIds)
                 .and(wrapper -> wrapper
-                        .eq(ManualItem::getUserId, userId)
+                        .eq(ManualItemDO::getUserId, userId)
                         .or()
-                        .eq(ManualItem::getUserId, Constants.PUBLIC_USERID))
-                .orderByAsc(ManualItem::getSort);
+                        .eq(ManualItemDO::getUserId, Constants.PUBLIC_USERID))
+                .orderByAsc(ManualItemDO::getSort);
 
-        List<ManualItem> miList = itemMapper.selectList(itemWrapper);
+        List<ManualItemDO> miList = itemMapper.selectList(itemWrapper);
 
         // 3. 将条目按分类ID分组
-        Map<String, List<ManualItem>> itemMap = miList.stream()
-                .collect(Collectors.groupingBy(ManualItem::getCateId));
+        Map<String, List<ManualItemDO>> itemMap = miList.stream()
+                .collect(Collectors.groupingBy(ManualItemDO::getCateId));
 
         // 4. 组装结果
         List<ManualVO> voList = mcList.stream().map(category -> {

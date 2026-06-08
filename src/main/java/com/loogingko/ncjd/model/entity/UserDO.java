@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 @Data
 @TableName("sys_user")
 @NoArgsConstructor
-public class User {
+public class UserDO {
 
     // 注册构造器
-    public User(String username, String password) {
+    public UserDO(String username, String password) {
         this.username = username;
         this.password = password;
         this.nickname = "新注册用户";

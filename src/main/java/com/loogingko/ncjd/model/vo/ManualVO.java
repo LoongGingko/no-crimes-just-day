@@ -1,6 +1,6 @@
 package com.loogingko.ncjd.model.vo;
 
-import com.loogingko.ncjd.model.entity.ManualItem;
+import com.loogingko.ncjd.model.entity.ManualItemDO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class ManualVO {
-    private List<ManualItem> items; // 手册条目列表
+    private List<ManualItemDO> items; // 手册条目列表
     private String id;
     private String userId;
     private String name;

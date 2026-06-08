@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("manual_category")
 @NoArgsConstructor
-public class ManualCategory {
+public class ManualCategoryDO {
 
     /**
      * 主键ID（雪花算法生成）
@@ -24,7 +24,7 @@ public class ManualCategory {
     private String id;
 
     /**
-     * 所属用户（0=公开/登录可见）
+     * 所属用户（公开/登录可见时默认值为0）
      */
     private String userId;
 

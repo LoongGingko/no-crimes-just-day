@@ -2,8 +2,8 @@ package com.loogingko.ncjd.service.auth;
 
 import com.loogingko.ncjd.config.JwtProperties;
 import com.loogingko.ncjd.constant.Constants;
-import com.loogingko.ncjd.model.bo.LoginUser;
-import com.loogingko.ncjd.model.entity.User;
+import com.loogingko.ncjd.model.dto.LoginUserDTO;
+import com.loogingko.ncjd.model.entity.UserDO;
 import com.loogingko.ncjd.util.CookieUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -30,7 +30,7 @@ public class JwtService {
     }
 
     // 创建JWT令牌
-    public String createToken(User user) {
+    public String createToken(UserDO user) {
         // 1. 获取当前时间
         long now = System.currentTimeMillis();
         // 2. 获取过期时间
@@ -55,13 +55,13 @@ public class JwtService {
     }
 
     // 校验令牌：并提取用户信息 (令牌无效或过期时抛出 JwtException)
-    public LoginUser getUserFromToken(String token) throws JwtException {
+    public LoginUserDTO getUserFromToken(String token) throws JwtException {
         Claims claims = Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-        return new LoginUser(
+        return new LoginUserDTO(
             claims.get("id", String.class), 
             claims.get("username", String.class),
             claims.get("role", String.class)
@@ -73,7 +73,7 @@ public class JwtService {
         String token = CookieUtils.extractTokenFromCookie();
         if (token == null) return Constants.PUBLIC_USERID;
 
-        LoginUser lu;
+        LoginUserDTO lu;
         try {
             lu = getUserFromToken(token);
         } catch (JwtException e) {

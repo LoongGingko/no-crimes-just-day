@@ -4,10 +4,10 @@ import cn.hutool.core.bean.BeanUtil;
 import com.loogingko.ncjd.config.JwtProperties;
 import com.loogingko.ncjd.constant.Constants;
 import com.loogingko.ncjd.model.bo.R;
-import com.loogingko.ncjd.model.dto.LoginRequest;
-import com.loogingko.ncjd.model.dto.LogoutRequest;
-import com.loogingko.ncjd.model.dto.RegisterRequest;
-import com.loogingko.ncjd.model.entity.User;
+import com.loogingko.ncjd.model.dto.LoginReq;
+import com.loogingko.ncjd.model.dto.LogoutReq;
+import com.loogingko.ncjd.model.dto.RegisterReq;
+import com.loogingko.ncjd.model.entity.UserDO;
 import com.loogingko.ncjd.model.vo.LoginResponse;
 import com.loogingko.ncjd.service.auth.CaptchaService;
 import com.loogingko.ncjd.service.auth.JwtService;
@@ -59,7 +59,7 @@ public class LoginController {
      * 用户登录入口
      */
     @PostMapping("/login")
-    public R login(@Valid @RequestBody LoginRequest req) {
+    public R login(@Valid @RequestBody LoginReq req) {
         String username = req.getUsername();
         log.info("登录请求: username={}", username);
 
@@ -81,7 +81,7 @@ public class LoginController {
             Authentication authentication = authManager.authenticate(authToken);
 
             // 3. 生成令牌
-            User userDb = userService.lambdaQuery().eq(User::getUsername, username).one();
+            UserDO userDb = userService.lambdaQuery().eq(UserDO::getUsername, username).one();
             String token = jwtService.createToken(userDb);
             
             // 4. 创建JWT Token的HttpOnly Cookie
@@ -107,7 +107,7 @@ public class LoginController {
      * 用户注册入口
      */
     @PostMapping("/register")
-    public R register(@Valid @RequestBody RegisterRequest req) {
+    public R register(@Valid @RequestBody RegisterReq req) {
         String username = req.getUsername();
         log.info("注册请求: username={}", username);
 
@@ -119,11 +119,11 @@ public class LoginController {
         }
 
         // 1. 检查用户名是否已存在
-        long count = userService.lambdaQuery().eq(User::getUsername, username).count();
+        long count = userService.lambdaQuery().eq(UserDO::getUsername, username).count();
         if (count > 0) return R.fail("用户名已存在").code(409);
 
         // 2. 数据库创建用户
-        User user = new User(username, passwordEncoder.encode(req.getPassword()));  // 对密码进行BCrypt加密
+        UserDO user = new UserDO(username, passwordEncoder.encode(req.getPassword()));  // 对密码进行BCrypt加密
 
         // 3. 保存到数据库
         boolean saved = userService.save(user);
@@ -139,7 +139,7 @@ public class LoginController {
      * 用户退出登录
      */
     @PostMapping("/logout")
-    public R logout(@RequestBody LogoutRequest req) {
+    public R logout(@RequestBody LogoutReq req) {
         String username = req.getUsername();
         CookieUtils.remove(Constants.TOKEN_COOKIE_NAME);
         log.info("退出登录成功: username={}", username);

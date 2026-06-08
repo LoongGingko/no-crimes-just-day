@@ -41,7 +41,7 @@ DROP TABLE IF EXISTS manual_category;
 CREATE TABLE manual_category
 (
     id          BIGINT                                      NOT NULL COMMENT '主键ID（雪花算法生成）',
-    user_id     BIGINT                                      NOT NULL COMMENT '所属用户（0=公开/登录可见）',
+    user_id     BIGINT                                      NOT NULL COMMENT '所属用户（公开/登录可见时默认值为0）',
     name        VARCHAR(64)                                 NOT NULL COMMENT '类别名称，如「我的观影」',
     type        VARCHAR(32)                                 NOT NULL COMMENT '类别类型，如 movie, tv, book, comic, music, game, oc',
     memo        TEXT                                        NULL COMMENT '类别描述',
@@ -59,8 +59,8 @@ CREATE TABLE manual_category
 DROP TABLE IF EXISTS manual_item;
 CREATE TABLE manual_item
 (
-    id          BIGINT NOT NULL COMMENT '主键ID（雪花算法生成）',
-    user_id     BIGINT                                      NOT NULL COMMENT '所属用户（0=公开/登录可见）',
+    id          BIGINT                                      NOT NULL COMMENT '主键ID（雪花算法生成）',
+    user_id     BIGINT                                      NOT NULL COMMENT '所属用户（公开/登录可见默认值为0）',
     cate_id     BIGINT                                      NOT NULL COMMENT '所属类别',
     title       VARCHAR(128)                                NOT NULL COMMENT '条目名称，如电影名、书名',
     cover       VARCHAR(512)                                NULL COMMENT '封面图片URL',
@@ -106,3 +106,26 @@ INSERT INTO manual_item (id, user_id, cate_id, title, cover, tags, comment, rati
 (2051531076388266002, 0, 2051531076388265990, '艾尔登法环', 'https://example.com/eldenring.jpg', ',魂系,FromSoftware,RPG,', '难度高但非常有成就感', 93, '{"year":2022,"developer":"FromSoftware"}', '2026-05-01 10:00:00', NULL, 35, 2, 2, 1, '2026-05-01 10:00:00', '2026-05-05 08:00:00'),
 (2051531076388266003, 0, 2051531076388265991, '星尘魔法师 - 艾莉娅', 'https://example.com/oc_alia.jpg', ',魔法,原创角色,奇幻,', '能够操控星尘力量的年轻魔法师', NULL, '{"age":19,"ability":"星尘魔法","personality":"温柔善良"}', '2026-04-01 10:00:00', '2026-04-10 18:00:00', 100, 1, 2, 2, '2026-04-01 10:00:00', '2026-04-10 18:00:00'),
 (2051531076388266004, 0, 2051531076388265991, '机械战士 - K-7', 'https://example.com/oc_k7.jpg', ',科幻,机甲,原创角色,', '拥有自我意识的战斗机器人', NULL, '{"model":"K-7","function":"战斗支援","ai_level":"高级"}', '2026-05-02 14:00:00', NULL, 45, 2, 2, 1, '2026-05-02 14:00:00', '2026-05-05 11:00:00');
+
+-- ================================================
+-- 笔记模块建表
+-- LiuRunYu 2026-06-08
+-- Engine: InnoDB | Charset: utf8mb4
+-- ================================================
+CREATE TABLE `memo_item` (
+    id              BIGINT          NOT NULL COMMENT '主键ID（雪花算法生成）',
+    user_id         BIGINT          NOT NULL COMMENT '所属用户（公开/登录可见时默认值为0）',
+    content         TEXT            NOT NULL COMMENT '笔记内容，支持HTML或Markdown富文本',
+    plain_text      TEXT            DEFAULT NULL COMMENT '笔记纯文本，用于全文检索或预览（去除HTML标签）',
+    tags            VARCHAR(255)    NULL COMMENT '标签，存储时首尾加逗号，如 ,待办,金句,经验,',
+    is_pinned       INT             NOT NULL DEFAULT 0 COMMENT '是否置顶：0=否, 1=是',
+    is_banner       INT             NOT NULL DEFAULT 0 COMMENT '是否首页横幅：0=否, 1=是',
+    device          VARCHAR(100)    DEFAULT NULL COMMENT '来源设备信息，如: iOS, Web, Chrome Plugin',
+    visible         INT             NOT NULL DEFAULT 0 COMMENT '显示状态：0=公开 1=登录可见 2=仅自己',
+    create_at     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_at     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    deleted_at      DATETIME        DEFAULT NULL COMMENT '软删除时间，NULL表示未删除，有值表示已删除',
+    
+    PRIMARY KEY (`id`),
+    KEY `idx_create_time` (`create_time`) USING BTREE COMMENT '用于按时间倒序展示时间流'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT '笔记条目';

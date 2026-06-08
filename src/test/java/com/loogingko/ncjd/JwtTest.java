@@ -1,6 +1,6 @@
 package com.loogingko.ncjd;
 
-import com.loogingko.ncjd.model.entity.User;
+import com.loogingko.ncjd.model.entity.UserDO;
 import com.loogingko.ncjd.service.auth.JwtService;
 import com.loogingko.ncjd.service.biz.UserService;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class JwtTest {
 
     @Test
     void createJWT() {
-        User userDb = userService.lambdaQuery().eq(User::getId, "1694173827450880001").one();
+        UserDO userDb = userService.lambdaQuery().eq(UserDO::getId, "1694173827450880001").one();
         String token = jwtService.createToken(userDb);
         System.out.println(token);
     }

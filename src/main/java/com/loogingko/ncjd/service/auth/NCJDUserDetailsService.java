@@ -1,6 +1,6 @@
 package com.loogingko.ncjd.service.auth;
 
-import com.loogingko.ncjd.model.entity.User;
+import com.loogingko.ncjd.model.entity.UserDO;
 import com.loogingko.ncjd.service.biz.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +26,7 @@ public class NCJDUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 1. 检查用户是否存在
-        User userDb = userService.lambdaQuery().eq(User::getUsername, username).one();
+        UserDO userDb = userService.lambdaQuery().eq(UserDO::getUsername, username).one();
         if (userDb == null) {
             throw new UsernameNotFoundException("用户不存在: " + username);
         }

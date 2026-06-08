@@ -24,7 +24,7 @@
         <!-- 每个组 -->
         <div v-for="group in groups" :key="group.name" class="ncjd-card ncjd-hover rounded-3xl" :class="{ 'md:col-span-2': group.span }">
           <header class="flex items-center justify-start px-5 pt-4">
-            <span class="ml-2 text-lg font-semibold tracking-[0.2em]">{{ group.name || '未分组' }} <span></span></span>
+            <span class="ml-2 font-semibold tracking-[0.2em]">{{ group.name || '未分组' }} <span></span></span>
             <span class="ncjd-text ncjd-l2 ml-2 rounded-full px-3 py-1 text-xs font-semibold shadow-inner">{{ group.sites?.length || 0 }}</span>
             <button class="ncjd-btn ncjd-ring ml-auto h-8 rounded-full px-2.5 text-xs backdrop-blur" @click="openAll(group.sites)">Open All</button>
           </header>
@@ -34,9 +34,9 @@
               <!-- 图标 / 标签 -->
               <motion.a
                 v-if="editable"
-                :animate="{ rotate: [-1, 1.5, -1.5, 1, -0.5, 0.5, 0] }"
+                :animate="{ rotate: [-1, 1.5, -1.5] }"
                 :transition="{
-                  duration: 0.7,
+                  duration: 0.3,
                   repeat: Infinity,
                   repeatType: 'loop',
                   ease: 'easeInOut',
@@ -46,11 +46,12 @@
                 class="flex cursor-pointer flex-col items-center gap-2 md:gap-3"
               >
                 <img class="ncjd-ring ncjd-h h-12 w-12 rounded-full" :src="'https://favicon.im/' + site.url" />
-                <div class="max-w-24 truncate text-sm font-semibold">{{ site.label || '未命名' }}</div>
+                <div class="max-w-24 truncate text-xs font-semibold">{{ site.label || '未命名' }}</div>
               </motion.a>
+              <!-- 非编辑状态 -->
               <a v-else target="_blank" :href="fmtUrl(site.url)" class="flex cursor-pointer flex-col items-center gap-2 md:gap-3">
                 <img class="ncjd-ring ncjd-h h-12 w-12 rounded-full" :src="'https://favicon.im/' + site.url" />
-                <div class="max-w-24 truncate text-sm font-semibold">{{ site.label || '未命名' }}</div>
+                <div class="max-w-24 truncate text-xs font-semibold">{{ site.label || '未命名' }}</div>
               </a>
             </div>
           </div>

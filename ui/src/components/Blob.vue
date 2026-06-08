@@ -3,7 +3,7 @@
   @description  动态光斑背景（Canvas 版）
 -->
 <template>
-  <canvas ref="canvasRef" class="blob-canvas" />
+  <canvas ref="canvasRef" class="blob-canvas" :style="{ opacity: delayDisplay ? '1' : '0' }" />
 </template>
 
 <script setup lang="ts">
@@ -13,6 +13,7 @@ import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 let animId = 0;
 const appStore = useAppStore();
 const canvasRef = ref<HTMLCanvasElement | null>(null);
+const delayDisplay = ref(false);
 const isDark = computed(() => appStore.theme !== 'light');
 
 const W = () => window.innerWidth;
@@ -44,7 +45,7 @@ interface Blob {
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
 // 初始化所有光斑
-const blobs: Blob[] = Array.from({ length: isMobile ? 5 : Math.floor(Math.random() * 4) + 4 }, () => ({
+const blobs: Blob[] = Array.from({ length: isMobile ? 5 : Math.floor(Math.random() * 3) + 4 }, () => ({
   startX: Math.random() * W(),
   startY: Math.random() * H(),
   hue: Math.random() * 360,
@@ -57,7 +58,7 @@ const blobs: Blob[] = Array.from({ length: isMobile ? 5 : Math.floor(Math.random
   rx: isMobile ? rand(80, 200) : rand(300, 700),
   ry: isMobile ? rand(60, 150) : rand(200, 600),
   vs: rand(0.1, 0.6),
-  ob: rand(0.3, 0.7),
+  ob: rand(0.3, 1),
   offsetTime: rand(-30, 0),
   hs: rand(8, 20),
   startTime: 0,
@@ -85,7 +86,7 @@ const draw = (now: number) => {
 
   // 清空画布，用叠加模式让光斑互相增亮
   ctx.clearRect(0, 0, w, h);
-  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalCompositeOperation = 'screen';
 
   for (const blob of blobs) {
     if (!blob.startTime) blob.startTime = now;
@@ -95,7 +96,7 @@ const draw = (now: number) => {
     const x = blob.startX + Math.sin(timed * blob.vx) * blob.rx + Math.cos(timed * 0.7) * blob.rx * 0.3;
     const y = blob.startY + Math.cos(timed * blob.vy) * blob.ry + Math.sin(timed * 0.5) * blob.ry * 0.3;
     // 呼吸式缩放和透明度波动
-    const scale = 0.6 + Math.sin(timed * blob.vs) * 0.3; // 基础缩放 60%，上下浮动30%
+    const scale = 0.6 + Math.sin(timed * blob.vs) * 0.2; // 基础缩放 60%，上下浮动20%
     const op = blob.ob + Math.sin(timed * 0.5) * 0.15; // 上下波动 ±0.15，频率固定为 0.5
     // 色相随时间缓慢漂移
     const hue = blob.hue + Math.sin(timed * 0.5) * 30;
@@ -114,8 +115,8 @@ const draw = (now: number) => {
     // 中心轻微衰减，模拟 blur 后中心也不是绝对满值
     g.addColorStop(0, `hsla(${hue},${blob.sat}%,${blob.lightness}%,${op * 0.9})`);
     // 柔和缓慢衰减
-    g.addColorStop(0.4, `hsla(${hue},${blob.sat}%,${blob.lightness}%,${op * 0.8})`);
-    g.addColorStop(0.85, `hsla(${hue},${blob.sat}%,${blob.lightness}%,${op * 0.5})`);
+    g.addColorStop(0.2, `hsla(${hue},${blob.sat}%,${blob.lightness}%,${op * 0.8})`);
+    g.addColorStop(0.8, `hsla(${hue},${blob.sat}%,${blob.lightness}%,${op * 0.5})`);
     // 70%~100%：快速衰减归零，模拟模糊边缘
     g.addColorStop(1, `hsla(${hue},${blob.sat}%,${blob.lightness}%,0)`);
 
@@ -134,6 +135,9 @@ onMounted(() => {
   resize();
   window.addEventListener('resize', resize);
   animId = requestAnimationFrame(draw);
+  setTimeout(() => {
+    delayDisplay.value = true;
+  }, 600);
 });
 
 // 卸载时清理：取消动画帧、移除监听器
@@ -161,5 +165,6 @@ watch(
   overflow: hidden;
   pointer-events: none;
   position: fixed;
+  transition: opacity 2s cubic-bezier(0.2, 0.9, 0.4, 1); /* 苹果动画曲线 */
 }
 </style>

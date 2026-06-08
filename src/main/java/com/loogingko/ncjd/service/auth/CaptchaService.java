@@ -1,7 +1,7 @@
 package com.loogingko.ncjd.service.auth;
 
 import com.loogingko.ncjd.model.bo.R;
-import com.loogingko.ncjd.model.dto.LoginRequest;
+import com.loogingko.ncjd.model.dto.LoginReq;
 import com.loogingko.ncjd.util.CookieUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -24,7 +24,7 @@ public class CaptchaService {
     private final StringRedisTemplate redisTemplate;
     
     // 校验图形验证码
-    public R vaildateCaptcha(LoginRequest req) {
+    public R vaildateCaptcha(LoginReq req) {
         String captchaId = CookieUtils.get(CookieUtils.CAPTCHA_ID);
         String code = req.getCaptcha();
 
