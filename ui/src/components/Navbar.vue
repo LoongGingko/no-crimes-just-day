@@ -97,6 +97,10 @@
                 <template v-if="isDark"><Sun class="svg-sm" />浅色模式</template>
                 <template v-else><Moon class="svg-sm" />深色模式</template>
               </li>
+              <li @click="updBlob" class="ncjd-hover2 first:pt-[0.9375em]">
+                <template v-if="myStore.blob_mode"><CircleOff class="svg-sm" />关闭光斑</template>
+                <template v-else><Circle class="svg-sm" />打开光斑</template>
+              </li>
               <li @click="fullscreen" class="ncjd-hover2">
                 <template v-if="isFullscreen"><Minimize2 class="svg-sm" />退出全屏</template>
                 <template v-else><Maximize2 class="svg-sm" />全屏</template>
@@ -146,6 +150,8 @@ import {
   LibraryBig,
   Sprout,
   EyeClosed,
+  Circle,
+  CircleOff
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
@@ -268,6 +274,12 @@ const closeImagebg = () => {
 // 切换深色/浅色模式
 const updTheme = () => {
   appStore.toggleTheme(true);
+  showPopover.value = false;
+};
+
+// 切换光斑
+const updBlob = () => {
+  myStore.toggleAttribute('blob_mode');
   showPopover.value = false;
 };
 

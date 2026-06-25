@@ -22,6 +22,10 @@ export const useAppStore = defineStore(STORAGE_KEY, {
       (this as any)[key] = value;
       this.persist();
     },
+    toggleAttribute(key: string) {
+      (this as any)[key] = !(this as any)[key];
+      this.persist();
+    },
     // 加载持久化
     hydrate() {
       const data = localStorage.getItem(STORAGE_KEY);

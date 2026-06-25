@@ -22,6 +22,7 @@ export interface AppState {
 
 // MyStore
 export interface MyStoreState {
+  blob_mode: boolean;
   furry_mode: boolean;
   curr_module: string;
   curr_search: string;

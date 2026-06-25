@@ -12,7 +12,8 @@ const STORAGE_KEY = 'myStore'; // 唯一名称
 export const useMyStore = defineStore(STORAGE_KEY, {
   state: (): MyStoreState => ({
     // 系统
-    furry_mode: false, // 福瑞模式 (链接分享)
+    blob_mode: true, // 开关光斑背景
+    furry_mode: false, // 福瑞模式
     curr_module: '/', // 当前导航栏 (用于高亮显示)
     curr_search: '', // 当前搜索值 (实现简易事件总线：赋值触发搜索, 搜索完成重置)
     pre_route: '', // 上个页面（返回的目标路径）
@@ -30,6 +31,10 @@ export const useMyStore = defineStore(STORAGE_KEY, {
     // 通用setter
     setAttribute(key: string, value: any) {
       (this as any)[key] = value;
+      this.persist();
+    },
+    toggleAttribute(key: string) {
+      (this as any)[key] = !(this as any)[key];
       this.persist();
     },
     // 加载持久化

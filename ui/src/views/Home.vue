@@ -10,7 +10,7 @@
       <div class="ncjd-card ncjd-hover mb-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl px-5 py-4 backdrop-blur-xl">
         <div>
           <p class="text-sm tracking-[0.35em] text-sky-400/80 dark:text-cyan-300">个人网站 · HomeLAB · 技术学习</p>
-          <p class="mt-2 text-sm text-slate-500">欢迎来到本程序员的电子自留地，本站是一块新技术试验田，同时实现一些我认为日常比较频繁使用的功能。</p>
+          <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">欢迎来到本程序员的电子自留地，本站是一块新技术试验田，同时实现一些我认为日常比较频繁使用的功能。</p>
         </div>
         <div class="flex flex-wrap items-center gap-3 text-sm text-slate-300">
           <span class="rounded-full bg-slate-900/5 px-3 py-1 text-slate-700 dark:bg-white/5 dark:text-slate-200">SpringBoot</span>

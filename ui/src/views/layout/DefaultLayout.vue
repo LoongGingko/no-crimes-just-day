@@ -10,7 +10,7 @@
     <!-- 渐变色背景 -->
     <Gradient />
     <!-- 光斑背景 -->
-    <Blob class="-z-40" />
+    <Blob v-if="myStore.blob_mode" class="-z-40" />
     <!-- 图片背景 -->
     <Imagebg v-if="myStore.furry_mode" class="-z-50" />
     <!-- 全局滚动条 -->
