@@ -162,30 +162,31 @@ watch(
     margin: 1em 0;
   }
 
+  /* 删除线 */
   strike {
     text-decoration: line-through;
   }
 
-  code {
+  /* code {
     background-color: #f5f5f5;
     padding: 2px 6px;
     border-radius: 4px;
     font-family: monospace;
-  }
+  } */
 
-  pre {
+  /* pre {
     background-color: #f5f5f5;
     padding: 12px;
     border-radius: 8px;
     overflow-x: auto;
     font-family: monospace;
-  }
+  } */
 
-  blockquote {
+  /* blockquote {
     border-left: 4px solid #ddd;
     padding-left: 16px;
     margin-left: 0;
     color: #666;
-  }
+  } */
 }
 </style>

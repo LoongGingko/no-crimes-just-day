@@ -46,6 +46,14 @@ export const BASE_ROUTE: RouteRecordRaw = {
       component: () => import('@/views/manual/Manual.vue'),
     },
     {
+      path: 'memo',
+      name: 'Memo',
+      meta: {
+        isAjax: 1,
+      },
+      component: () => import('@/views/memo/Memo.vue'),
+    },
+    {
       path: 'furry',
       name: 'Furry',
       component: () => import('@/views/NotFound.vue'),

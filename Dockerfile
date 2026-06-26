@@ -8,6 +8,9 @@ FROM eclipse-temurin:17-jre-alpine
 # 执行目录
 WORKDIR /app
 
+# 安装时区数据 (Alpine 默认无时区包)
+RUN apk add --no-cache tzdata
+
 # 创建日志目录，同时创建spring用户 (避免root运行导致的权限过大问题，生产环境必备)
 RUN addgroup -S spring \
     && adduser -S spring -G spring \
@@ -16,6 +19,7 @@ RUN addgroup -S spring \
 
 # 环境变量
 ENV SPRING_PROFILES_ACTIVE=prod \
+    TZ=Asia/Shanghai \
     JAVA_OPTS=""
 
 # 只复制jar包

@@ -1,14 +1,16 @@
 <template>
   <!-- Naive全局配置 -->
   <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme="theme" :theme-overrides="themeOverrides">
-    <n-message-provider>
-      <router-view />
-    </n-message-provider>
+    <n-dialog-provider>
+      <n-message-provider>
+        <router-view />
+      </n-message-provider>
+    </n-dialog-provider>
   </n-config-provider>
 </template>
 
 <script setup lang="ts">
-import { NConfigProvider, NMessageProvider, zhCN, dateZhCN, darkTheme, type GlobalThemeOverrides } from 'naive-ui';
+import { NConfigProvider, NMessageProvider, NDialogProvider, zhCN, dateZhCN, darkTheme, type GlobalThemeOverrides } from 'naive-ui';
 import { useAppStore } from './config/app-store';
 import { computed } from 'vue';
 import { useResponsive, queryIsMobile } from './utils/responsive';

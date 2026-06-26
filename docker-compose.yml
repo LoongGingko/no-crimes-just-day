@@ -22,6 +22,8 @@ services:
     ncjd:
         image: ahornbeast/ncjd:latest
         container_name: ncjd-app
+#        environment:
+#            TZ: Asia/Shanghai
         networks:
             - app_network
         ports:
@@ -64,6 +66,7 @@ services:
         ports:
             - "6379:6379"
         environment:
+            TZ: Asia/Shanghai
             REDIS_PASSWORD: ${REDIS_PASSWORD}
         command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"] # 启动时设置密码
         healthcheck:
@@ -93,6 +96,7 @@ services:
         ports:
             - "3306:3306"
         environment:
+            TZ: Asia/Shanghai
             MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
             MYSQL_DATABASE: ncjd
         logging:

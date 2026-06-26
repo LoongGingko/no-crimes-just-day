@@ -7,6 +7,7 @@ import com.loogingko.ncjd.service.biz.MemoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +39,7 @@ public class MemoController {
      * @author LiuRunYu 2026-06-25
      */
     @PostMapping("/list")
-    public R list(MemoListReq req) {
+    public R list(@RequestBody MemoListReq req) {
         return memoService.listByUser(req);
     }
 
@@ -47,7 +48,7 @@ public class MemoController {
      * @author LiuRunYu 2026-06-25
      */
     @PostMapping("/save")
-    public R save(MemoSaveReq req) {
+    public R save(@RequestBody MemoSaveReq req) {
         return memoService.saveOrUpdate(req);
     }
 

@@ -1,4 +1,4 @@
-package com.loogingko.ncjd.model.vo;
+package com.loogingko.ncjd.model.dto;
 
 import com.loogingko.ncjd.model.entity.ManualItemDO;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
-public class ManualVO {
+public class ManualDTO {
     private List<ManualItemDO> items; // 手册条目列表
     private String id;
     private String userId;

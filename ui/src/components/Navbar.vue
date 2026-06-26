@@ -67,7 +67,7 @@
         class="flex shrink-0 basis-14 flex-col items-center md:basis-16"
         @click="jump2Valid(link, $event)"
         :class="['nav-item', link.path === '/' + myStore.curr_module ? ' text-sky-400 dark:text-cyan-400' : 'text-slate-500  dark:text-slate-400 hover:dark:text-white']"
-      >
+        >
         <!-- 图标 / 标签 -->
         <component :is="link.icon" class="nav-icon md:h-8 md:w-8" />
         <span :class="isHovering ? 'mt-2 max-h-4  opacity-100' : 'max-h-0 opacity-0'" class="text-xs transition-all md:text-sm">{{ link.label }}</span>
@@ -179,15 +179,15 @@ const isFullscreen = ref(false); // 是否全屏
 const inputLabel = ref('');
 const links = [
   { path: '/', icon: Home, label: '首页', label_en: 'Home' },
-  { path: '/tv', icon: Tv, label: '拟物TV', label_en: 'Formula Image\nScanner' },
-  { path: '/grid', icon: LayoutGrid, label: '导航页', label_en: 'Home' },
+  { path: '/tv', icon: Tv, label: '拟物TV', label_en: 'Tv' },
+  { path: '/grid', icon: LayoutGrid, label: '导航页', label_en: 'Grid' },
   // { path: '/grid2', icon: LayoutGrid, label: '导航页2', label_en: 'Home' },
   { path: '/manual', icon: LibraryBig, label: '手册', label_en: 'Manual' },
-  { invalid: true, path: '/habit', icon: Sprout, label: '习惯', label_en: 'PDF\nScanner' },
-  { invalid: true, path: '/gallery', icon: Image, label: '相册', label_en: 'PDF\nScanner' },
-  { invalid: true, path: '/clip', icon: Star, label: '剪藏', label_en: 'Formula Image\nScanner' },
-  { invalid: true, path: '/todo', icon: CheckSquare, label: '待办', label_en: 'PDF\nScanner' },
-  { invalid: true, path: '/game', icon: Gamepad2, label: '游戏', label_en: 'PDF\nScanner' },
+  { path: '/memo', icon: CheckSquare, label: '笔记', label_en: 'Memo' },
+  { invalid: true, path: '/habit', icon: Sprout, label: '习惯', label_en: 'Habit' },
+  { invalid: true, path: '/gallery', icon: Image, label: '相册', label_en: 'Gallery' },
+  { invalid: true, path: '/clip', icon: Star, label: '剪藏', label_en: 'Clip' },
+  { invalid: true, path: '/game', icon: Gamepad2, label: '游戏', label_en: 'Game' },
 ];
 
 // 开发者选项
@@ -229,8 +229,6 @@ const fullscreen = () => {
 
 let timeId: any = null;
 const jump2Valid = (link: any, event: any) => {
-  myStore.setAttribute('curr_module', link.path); // 设置高亮
-
   // 手机端延时关闭导航栏
   if (appStore.isMobile()) {
     if (timeId) clearTimeout(timeId);

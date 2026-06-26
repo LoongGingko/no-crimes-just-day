@@ -9,7 +9,7 @@ import com.loogingko.ncjd.mapper.ManualItemMapper;
 import com.loogingko.ncjd.model.bo.R;
 import com.loogingko.ncjd.model.entity.ManualCategoryDO;
 import com.loogingko.ncjd.model.entity.ManualItemDO;
-import com.loogingko.ncjd.model.vo.ManualVO;
+import com.loogingko.ncjd.model.dto.ManualDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -61,8 +61,8 @@ public class ManualService {
                 .collect(Collectors.groupingBy(ManualItemDO::getCateId));
 
         // 4. 组装结果
-        List<ManualVO> voList = mcList.stream().map(category -> {
-            ManualVO vo = BeanUtil.copyProperties(category, ManualVO.class);
+        List<ManualDTO> voList = mcList.stream().map(category -> {
+            ManualDTO vo = BeanUtil.copyProperties(category, ManualDTO.class);
             vo.setItems(itemMap.getOrDefault(category.getId(), Collections.emptyList()));
             return vo;
         }).collect(Collectors.toList());

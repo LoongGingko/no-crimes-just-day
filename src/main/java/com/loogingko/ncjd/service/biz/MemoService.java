@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.loogingko.ncjd.constant.Constants;
 import com.loogingko.ncjd.mapper.MemoMapper;
 import com.loogingko.ncjd.model.bo.R;
+import com.loogingko.ncjd.model.dto.MemoListDTO;
 import com.loogingko.ncjd.model.dto.MemoListReq;
 import com.loogingko.ncjd.model.dto.MemoSaveReq;
 import com.loogingko.ncjd.model.entity.MemoItemDO;
@@ -15,7 +16,9 @@ import com.loogingko.ncjd.service.auth.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -74,9 +77,40 @@ public class MemoService extends ServiceImpl<MemoMapper, MemoItemDO> {
                         })
                 .ge(StrUtil.isNotBlank(req.getDateStart()), MemoItemDO::getCreateAt, req.getDateStart())
                 .le(StrUtil.isNotBlank(req.getDateEnd()), MemoItemDO::getCreateAt, req.getDateEnd())
-                .orderByDesc(MemoItemDO::getCreateAt) // 创建时间降序，防止混乱
+                .orderByDesc(MemoItemDO::getIsPinned, MemoItemDO::getCreateAt) // 置顶、创建时间降序，防止混乱
                 .list();
-        return R.succ(memoDOs);
+        List<MemoListDTO> memoDTOs = memoDOs.stream().map(this::toDTO).toList();
+        return R.succ(memoDTOs);
+    }
+    
+    /**
+     * DO 转 DTO
+     * @author LiuRunYu 2026-06-26
+     */
+    private MemoListDTO toDTO(MemoItemDO memoDO) {
+        MemoListDTO dto = BeanUtil.copyProperties(memoDO, MemoListDTO.class);
+        dto.setDateShow(formatRelativeTime(memoDO.getCreateAt()));
+        return dto;
+    }
+
+    /**
+     * 格式化相对时间展示（刚刚、X分钟前、X小时前、X天前、M月d日）
+     * @author LiuRunYu 2026-06-26
+     */
+    private String formatRelativeTime(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return "";
+        }
+        Duration duration = Duration.between(dateTime, LocalDateTime.now());
+        long minutes = duration.toMinutes();
+        long hours = duration.toHours();
+        long days = duration.toDays();
+
+        if (minutes < 1) return "刚刚";
+        if (minutes < 60) return minutes + " 分钟前";
+        if (hours < 24) return hours + " 小时前";
+        if (days < 7) return days + " 天前";
+        return dateTime.format(DateTimeFormatter.ofPattern("M月d日"));
     }
 
     /**

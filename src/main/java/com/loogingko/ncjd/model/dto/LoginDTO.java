@@ -1,4 +1,4 @@
-package com.loogingko.ncjd.model.vo;
+package com.loogingko.ncjd.model.dto;
 
 import lombok.Data;
 
@@ -7,14 +7,14 @@ import lombok.Data;
  * @author LiuRunYu 2026-04-07
  */
 @Data
-public class LoginResponse {
+public class LoginDTO {
     private String id;
     private String username;
     private String nickname;
 
-    public LoginResponse() {}
+    public LoginDTO() {}
 
-    public LoginResponse(String id, String username, String nickname) {
+    public LoginDTO(String id, String username, String nickname) {
         this.id = id;
         this.username = username;
         this.nickname = nickname;

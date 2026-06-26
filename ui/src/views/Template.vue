@@ -14,6 +14,10 @@ import { CirclePlus } from 'lucide-vue-next';
 import { fmtUrl } from '@/utils/common';
 import Sortable from 'sortablejs';
 import { motion } from 'motion-v';
+import { useMyStore } from "@/config/my-store";
+
+const myStore = useMyStore();
+
 </script>
 
 <style lang="less" scoped></style>

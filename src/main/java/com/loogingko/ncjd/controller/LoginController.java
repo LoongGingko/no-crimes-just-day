@@ -8,7 +8,7 @@ import com.loogingko.ncjd.model.dto.LoginReq;
 import com.loogingko.ncjd.model.dto.LogoutReq;
 import com.loogingko.ncjd.model.dto.RegisterReq;
 import com.loogingko.ncjd.model.entity.UserDO;
-import com.loogingko.ncjd.model.vo.LoginResponse;
+import com.loogingko.ncjd.model.dto.LoginDTO;
 import com.loogingko.ncjd.service.auth.CaptchaService;
 import com.loogingko.ncjd.service.auth.JwtService;
 import com.loogingko.ncjd.service.auth.LimitService;
@@ -90,7 +90,7 @@ public class LoginController {
             // 5. 返回成功消息
             log.info("登录成功: username={}", username);
             limitService.clearLoginLimit(username);
-            return R.succ(BeanUtil.copyProperties(userDb, LoginResponse.class)).success("登录成功：" + username);
+            return R.succ(BeanUtil.copyProperties(userDb, LoginDTO.class)).success("登录成功：" + username);
             
         } catch (BadCredentialsException e) {
             log.warn("登录失败: username={}, 原因=用户名或密码错误", username);
@@ -132,7 +132,7 @@ public class LoginController {
             return R.fail("注册失败，请稍后重试").code(500);
         }
         log.info("注册成功: username={}", username);
-        return R.succ(BeanUtil.copyProperties(user, LoginResponse.class));
+        return R.succ(BeanUtil.copyProperties(user, LoginDTO.class));
     }
 
     /**
